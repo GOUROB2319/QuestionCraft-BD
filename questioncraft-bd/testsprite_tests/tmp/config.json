@@ -1,0 +1,20 @@
+{
+  "status": "commited",
+  "type": "frontend",
+  "scope": "codebase",
+  "localEndpoint": "http://localhost:3000",
+  "loginUser": "gourobsaha2319@gmail.com",
+  "loginPassword": "aaSS10#.",
+  "executionArgs": {
+    "projectName": "questioncraft-bd",
+    "projectPath": "c:\\Users\\GourobSaha\\OneDrive - Gourob Saha\\QuestionCraft-BD\\questioncraft-bd",
+    "testIds": [],
+    "additionalInstruction": "Please test registration first (TC001), then use that account's credentials (or any registered account) to test the dashboard and question management. The project uses Bengali text; ensure the text is visible and matches correctly. Ensure you select the proper class and subject dropdowns in question creation tests.",
+    "serverMode": "production",
+    "envs": {
+      "API_KEY": "sk-user-lE8wMyIKWLP_4JHKpYK0G-F3ougduNf9A6EsoPD-H_7fT68rPGuzcqXrg_Ls1L5cm-ytb0265mr5zEIBYVjEmizCl8OdzQFukYUTlU3PosCZ1VLPVZG486xn_7ywRPDTcvo"
+    }
+  },
+  "serverPort": 62612,
+  "proxy": "http://07a81193-e276-4e8d-8e48-da8bd380c841:B9zKfFf2q2miiaWRYXbk3XwMDRawiTlG@tun.testsprite.com:8080"
+}

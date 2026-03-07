@@ -1,345 +1,270 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   ArrowRight,
-  BookCheck,
-  FileStack,
-  GraduationCap,
-  LayoutDashboard,
-  Menu,
-  ShieldCheck,
   Sparkles,
-  X,
+  GraduationCap,
+  ShieldCheck,
+  CheckCircle2,
+  FileText,
+  Download
 } from 'lucide-react';
-import { BrandMark } from '@/components/layout/brand-mark';
 import { Button } from '@/components/ui/button';
-
-const navItems = [
-  { href: '#features', label: 'ফিচার' },
-  { href: '#workflow', label: 'ওয়ার্কফ্লো' },
-  { href: '#workspace', label: 'ওয়ার্কস্পেস' },
-  { href: '#cta', label: 'শুরু করুন' },
-];
-
-const stats = [
-  { value: '৯,০০০+', label: 'শিক্ষক ও কনটেন্ট টিম' },
-  { value: '৫০,০০০+', label: 'প্রস্তুত প্রশ্নপত্র ও draft' },
-  { value: '১০০+', label: 'বিষয় ও পাঠ্যকাঠামো' },
-  { value: '২ মিনিট', label: 'প্রথম usable draft তৈরির গড় সময়' },
-];
+import { BrandMark } from '@/components/layout/brand-mark';
+import { motion } from 'framer-motion';
 
 const features = [
   {
     icon: Sparkles,
-    title: 'AI-assisted question workflow',
-    description: 'প্রশ্নের ধরন, নম্বর, difficulty আর Bangla formatting একসাথে সামলে draft সাজানো যায়।',
+    title: 'AI দিয়ে প্রশ্ন তৈরি',
+    description: 'NCTB কারিকুলাম অনুযায়ী কৃত্রিম বুদ্ধিমত্তা ব্যবহার করে কয়েক সেকেন্ডে মানসম্মত প্রশ্ন তৈরি করুন।',
   },
   {
-    icon: FileStack,
-    title: 'Question bank management',
-    description: 'নিজস্ব library, filters, metadata, duplicates এবং reusable items এক জায়গায় রাখা যায়।',
+    icon: GraduationCap,
+    title: 'বাংলায় সম্পূর্ণ সাপোর্ট',
+    description: 'ইউনিকোড বাংলা ফন্ট এবং গাণিতিক সমীকরণ সহ সব ধরণের বাংলা কন্টেন্ট নিরবচ্ছিন্নভাবে ব্যবহার করুন।',
   },
   {
-    icon: LayoutDashboard,
-    title: 'Structured dashboard and export flow',
-    description: 'ড্যাশবোর্ড, paper status, recent activity, export settings এবং settings panel একই design system অনুসরণ করে।',
+    icon: ShieldCheck,
+    title: 'সরকারি ফরম্যাট',
+    description: 'মাধ্যমিক ও উচ্চ মাধ্যমিক শিক্ষা বোর্ডের নির্ধারিত স্ট্যান্ডার্ড ফরম্যাটে প্রশ্নপত্র প্রিন্ট ও ডাউনলোড করুন।',
   },
 ];
 
-const workflow = [
+const workflowSteps = [
   {
-    step: '১',
-    title: 'শ্রেণি, বিষয় ও question mode ঠিক করুন',
-    description: 'MCQ, সংক্ষিপ্ত বা সৃজনশীল যেটাই হোক, editor instantly relevant layout সাজিয়ে দেয়।',
+    title: "বিষয়ের তথ্য যুক্ত করুন",
+    description: "শ্রেণি, বিষয় এবং প্রশ্নের ধরণ নির্বাচন করুন আমাদের লাইব্রেরি থেকে।"
   },
   {
-    step: '২',
-    title: 'প্রশ্ন তৈরি, refine এবং organize করুন',
-    description: 'Editor, bank এবং paper list এখন aligned cards, readable spacing এবং focused actions ব্যবহার করে।',
+    title: "প্রশ্নের ড্রাফট তৈরি",
+    description: "AI ব্যবহার করে বা ব্যাংক থেকে বাছাইকৃত প্রশ্ন সরাসরি আপনার ড্রাফটে যুক্ত করুন।"
   },
   {
-    step: '৩',
-    title: 'Review, export এবং share করুন',
-    description: 'Draft save, paper view, PDF export এবং team-ready output একই workflow থেকে করা যায়।',
-  },
+    title: "প্রিভিউ এবং এক্সপোর্ট",
+    description: "সবকিছু ঠিক থাকলে সরাসরি PDF হিসেবে ডাউনলোড বা প্রিন্ট করুন।"
+  }
 ];
 
 export default function HomePage() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(16,185,129,0.14),_transparent_24%),linear-gradient(180deg,_#f9fcfa_0%,_#edf4f0_100%)] text-zinc-950">
-      <header className="sticky top-0 z-50 border-b border-black/5 bg-white/78 backdrop-blur-xl">
-        <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen overflow-x-clip flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-primary/10 selection:text-primary">
+      {/* Sticky Navbar */}
+      <header
+        className={`fixed top-0 z-50 w-full transition-all duration-300 ${scrolled ? 'bg-white/90 backdrop-blur-md shadow-sm border-b border-slate-200 py-3' : 'bg-transparent py-5'
+          }`}
+      >
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <BrandMark />
 
-          <nav className="hidden items-center gap-7 md:flex">
-            {navItems.map((item) => (
-              <a key={item.href} href={item.href} className="text-sm font-semibold text-zinc-600 transition hover:text-primary">
-                {item.label}
-              </a>
-            ))}
-          </nav>
-
-          <div className="hidden items-center gap-3 md:flex">
-            <Button variant="ghost" asChild>
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" className="font-bold text-primary hover:bg-primary/5 hidden sm:flex" asChild>
               <Link href="/login">লগইন</Link>
             </Button>
-            <Button asChild>
-              <Link href="/register">
-                শুরু করুন
-                <ArrowRight className="h-4 w-4" />
-              </Link>
+            <Button className="bg-primary hover:bg-primary/90 text-white shadow-md transition-transform hover:scale-105 rounded-xl px-6" asChild>
+              <Link href="/register">একাউন্ট তৈরি করুন</Link>
             </Button>
           </div>
-
-          <button
-            type="button"
-            className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-black/5 bg-white md:hidden"
-            onClick={() => setIsMenuOpen((open) => !open)}
-            aria-label="Toggle menu"
-          >
-            {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
         </div>
-
-        {isMenuOpen && (
-          <div className="border-t border-black/5 bg-white px-4 py-4 md:hidden">
-            <div className="grid gap-2">
-              {navItems.map((item) => (
-                <a
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setIsMenuOpen(false)}
-                  className="rounded-2xl px-4 py-3 text-sm font-semibold text-zinc-700 hover:bg-emerald-50"
-                >
-                  {item.label}
-                </a>
-              ))}
-              <Link href="/login" className="rounded-2xl px-4 py-3 text-sm font-semibold text-zinc-700 hover:bg-emerald-50">
-                লগইন
-              </Link>
-            </div>
-          </div>
-        )}
       </header>
 
-      <main>
-        <section className="px-4 pb-20 pt-14 sm:px-6 lg:px-8 lg:pb-28 lg:pt-20">
-          <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1.04fr_0.96fr] lg:items-center">
-            <div>
-              <div className="inline-flex rounded-full border border-primary/15 bg-white/85 px-4 py-2 text-xs font-semibold uppercase tracking-[0.28em] text-primary shadow-sm">
-                Professional Web App for QuestionCraft BD
-              </div>
-              <h1 className="mt-7 max-w-4xl text-5xl font-black leading-[0.98] tracking-tight text-zinc-950 md:text-7xl">
-                Bangla-first question paper workflow
-                <span className="mt-2 block bg-gradient-to-r from-primary via-emerald-600 to-teal-700 bg-clip-text text-transparent">
-                  এখন দেখতে এবং কাজ করতে দুটোই professional
-                </span>
-              </h1>
-              <p className="mt-6 max-w-2xl text-lg leading-8 text-zinc-600">
-                Landing page, auth screens, dashboard, question bank, editor আর paper flow এখন
-                aligned layout, better spacing, clear actions এবং Supabase-connected auth logic-এ সাজানো।
-              </p>
+      <main className="flex-1 overflow-x-clip pt-24 pb-16">
+        {/* Hero Section */}
+        <section className="relative overflow-hidden px-4 pb-18 pt-12 sm:px-6 sm:pb-20 lg:px-8 lg:pt-24">
+          {/* Decorative gradients */}
+          <div className="absolute left-1/2 top-0 -z-10 h-[500px] w-[500px] -translate-x-1/2 rounded-full bg-primary/5 blur-[100px]" />
+          <div className="absolute right-0 top-1/4 -z-10 h-[400px] w-[400px] translate-x-1/3 rounded-full bg-accent/10 blur-[80px]" />
 
-              <div className="mt-9 flex flex-col gap-4 sm:flex-row">
-                <Button size="lg" asChild>
-                  <Link href="/register">
-                    ফ্রি workspace খুলুন
-                    <ArrowRight className="h-4 w-4" />
-                  </Link>
-                </Button>
-                <Button size="lg" variant="secondary" asChild>
-                  <Link href="/login">ড্যাশবোর্ডে লগইন</Link>
-                </Button>
-              </div>
+          <div className="mx-auto max-w-5xl text-center">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+              className="mb-6 inline-flex max-w-full items-center gap-2 rounded-full border border-accent/20 bg-accent/10 px-4 py-2 text-xs font-bold text-accent sm:mb-8 sm:px-5 sm:text-sm"
+            >
+              <Sparkles className="h-4 w-4" />
+              <span>স্মার্ট এডুকেশন এখন হাতের নাগালে</span>
+            </motion.div>
 
-              <div className="mt-12 grid gap-4 sm:grid-cols-2">
-                {stats.map((stat) => (
-                  <div key={stat.label} className="surface-card rounded-[1.75rem] p-5">
-                    <div className="text-3xl font-black text-zinc-950">{stat.value}</div>
-                    <div className="mt-2 text-sm leading-6 text-zinc-500">{stat.label}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="mx-auto max-w-4xl text-[2.75rem] font-black tracking-tight text-primary leading-[1.08] sm:text-5xl sm:leading-[1.1] lg:text-[4.5rem] lg:leading-[1.05]"
+            >
+              পরীক্ষার প্রশ্নপত্র তৈরি করুন <br className="hidden sm:block" />
+              <span className="text-accent italic">সহজেই</span>
+            </motion.h1>
 
-            <div className="surface-card rounded-[2rem] p-4 sm:p-6">
-              <div className="rounded-[1.8rem] bg-zinc-950 p-5 text-white shadow-2xl">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <div className="inline-flex rounded-full bg-emerald-400/15 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-emerald-200">
-                      Live Workspace
-                    </div>
-                    <h2 className="mt-4 text-2xl font-black tracking-tight">Teacher dashboard + editor + bank</h2>
-                  </div>
-                  <div className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-semibold text-zinc-200">
-                    Supabase Auth Ready
-                  </div>
-                </div>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="mx-auto mt-6 max-w-3xl text-base leading-relaxed text-slate-600 font-medium sm:mt-8 sm:text-lg lg:text-xl"
+            >
+              বাংলাদেশের শিক্ষকদের জন্য ডিজাইন করা সম্পূর্ণ আধুনিক প্ল্যাটফর্ম।
+              NCTB কারিকুলাম অনুসরণ করে কয়েক মিনিটে নির্ভুল প্রশ্নপত্র প্রস্তুত করুন।
+            </motion.p>
 
-                <div className="mt-6 grid gap-4">
-                  <div className="rounded-[1.5rem] bg-white/5 p-4">
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-400/15 text-emerald-200">
-                        <GraduationCap className="h-5 w-5" />
-                      </div>
-                      <div>
-                        <div className="font-semibold">Class 9 Bangla 1st Paper</div>
-                        <div className="text-sm text-zinc-400">Draft status, subject metadata, export actions</div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <div className="rounded-[1.5rem] bg-white/5 p-4">
-                      <div className="text-sm font-semibold text-zinc-300">Question Bank</div>
-                      <div className="mt-2 text-2xl font-black">১৪৮</div>
-                      <div className="mt-1 text-sm text-zinc-400">MCQ, short, broad tagged items</div>
-                    </div>
-                    <div className="rounded-[1.5rem] bg-white/5 p-4">
-                      <div className="text-sm font-semibold text-zinc-300">Paper Pipeline</div>
-                      <div className="mt-2 text-2xl font-black">২৩</div>
-                      <div className="mt-1 text-sm text-zinc-400">draft, published and export-ready papers</div>
-                    </div>
-                  </div>
-                  <div className="rounded-[1.5rem] bg-gradient-to-r from-emerald-400/18 to-teal-300/10 p-4">
-                    <div className="flex items-center gap-3">
-                      <ShieldCheck className="h-5 w-5 text-emerald-200" />
-                      <div>
-                        <div className="font-semibold">Aligned professional UI</div>
-                        <div className="text-sm text-zinc-300">auth, dashboard and editor now follow one coherent spacing and action system</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="mt-10 flex flex-col items-center justify-center gap-4 sm:mt-12 sm:flex-row"
+            >
+              <Button size="xl" className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-white shadow-xl shadow-primary/20 transition-all hover:-translate-y-1 text-lg h-14 px-8 rounded-xl" asChild>
+                <Link href="/register">
+                  শুরু করুন
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
+              </Button>
+              <Button size="xl" variant="outline" className="w-full sm:w-auto border-2 border-slate-200 text-slate-700 bg-white hover:bg-slate-50 hover:border-slate-300 transition-all hover:-translate-y-1 text-lg h-14 px-8 rounded-xl" asChild>
+                <Link href="#features">আরও জানুন</Link>
+              </Button>
+            </motion.div>
           </div>
         </section>
 
-        <section id="features" className="px-4 py-20 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-7xl">
-            <div className="max-w-3xl">
-              <div className="text-sm font-semibold uppercase tracking-[0.24em] text-primary/80">Core Features</div>
-              <h2 className="mt-4 text-4xl font-black tracking-tight md:text-5xl">
-                শুধু সুন্দর landing না, usable product workflow
-              </h2>
-              <p className="mt-5 text-lg leading-8 text-zinc-600">
-                Auth pages, dashboard, bank এবং editor-এ action hierarchy, buttons, spacing এবং visual grouping সবকিছু নতুনভাবে সাজানো হয়েছে।
-              </p>
+        {/* Features Section */}
+        <section id="features" className="py-24 sm:py-32 relative z-10">
+          <div className="absolute inset-0 bg-white -skew-y-3 origin-top-left -z-10 border-y border-slate-100/50 shadow-sm" />
+
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="text-center max-w-2xl mx-auto mb-16">
+              <h2 className="text-3xl font-black tracking-tight text-primary sm:text-4xl">কেন QuestionCraft BD?</h2>
+              <p className="mt-4 text-lg text-slate-600 font-medium">শিক্ষকদের মূল্যবান সময় বাঁচাতে আমাদের রয়েছে বিশেষায়িত সব ফিচার।</p>
             </div>
 
-            <div className="mt-12 grid gap-6 lg:grid-cols-3">
-              {features.map((feature) => {
-                const Icon = feature.icon;
-                return (
-                  <article key={feature.title} className="surface-card rounded-[2rem] p-8">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 text-primary">
-                      <Icon className="h-6 w-6" />
-                    </div>
-                    <h3 className="mt-6 text-2xl font-black tracking-tight">{feature.title}</h3>
-                    <p className="mt-4 text-base leading-7 text-zinc-600">{feature.description}</p>
-                  </article>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-
-        <section id="workflow" className="bg-white/65 px-4 py-20 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-7xl">
-            <div className="text-center">
-              <div className="inline-flex rounded-full bg-emerald-100 px-4 py-2 text-sm font-semibold text-emerald-700">
-                Structured Workflow
-              </div>
-              <h2 className="mt-5 text-4xl font-black tracking-tight md:text-5xl">৩ ধাপে production-ready question flow</h2>
-            </div>
-            <div className="mt-14 grid gap-6 lg:grid-cols-3">
-              {workflow.map((item) => (
-                <article key={item.step} className="surface-card rounded-[2rem] p-8">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-zinc-950 text-xl font-black text-white">
-                    {item.step}
+            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+              {features.map((feature, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-50px" }}
+                  transition={{ delay: i * 0.1, duration: 0.5 }}
+                  className="group rounded-[2rem] border border-slate-100 bg-slate-50/50 p-8 transition-all duration-300 hover:-translate-y-2 hover:bg-white hover:shadow-2xl hover:shadow-primary/5 hover:border-primary/20"
+                >
+                  <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white border border-slate-100 text-primary shadow-sm transition-colors group-hover:bg-primary group-hover:text-white group-hover:border-primary mb-6">
+                    <feature.icon className="h-8 w-8" />
                   </div>
-                  <h3 className="mt-6 text-2xl font-black tracking-tight">{item.title}</h3>
-                  <p className="mt-4 text-base leading-7 text-zinc-600">{item.description}</p>
-                </article>
+                  <h3 className="text-xl font-bold text-slate-900 mb-3">{feature.title}</h3>
+                  <p className="leading-relaxed text-slate-600 font-medium">{feature.description}</p>
+                </motion.div>
               ))}
             </div>
           </div>
         </section>
 
-        <section id="workspace" className="px-4 py-20 sm:px-6 lg:px-8">
-          <div className="mx-auto grid max-w-7xl gap-8 rounded-[2.5rem] bg-zinc-950 px-6 py-8 text-white shadow-2xl sm:px-10 lg:grid-cols-[1.05fr_0.95fr] lg:px-14 lg:py-12">
-            <div>
-              <div className="text-sm font-semibold uppercase tracking-[0.24em] text-emerald-300/80">Workspace Highlights</div>
-              <h2 className="mt-4 text-4xl font-black tracking-tight md:text-5xl">
-                Design, alignment, and flow এখন একসাথে ঠিক করা হয়েছে
-              </h2>
-              <p className="mt-5 max-w-2xl text-lg leading-8 text-zinc-300">
-                Broken route, redirect mismatch, fake verify flow এবং unstructured dashboard shell-এর মতো core issues ঠিক করা হয়েছে যাতে product usable হয়।
-              </p>
-            </div>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="rounded-[1.75rem] bg-white/8 p-5">
-                <div className="text-3xl font-black text-emerald-300">Real Auth</div>
-                <div className="mt-2 text-sm leading-6 text-zinc-300">login, register, verify, callback, redirectTo flow hardened</div>
-              </div>
-              <div className="rounded-[1.75rem] bg-white/8 p-5">
-                <div className="text-3xl font-black text-emerald-300">Unified Shell</div>
-                <div className="mt-2 text-sm leading-6 text-zinc-300">dashboard pages now sit inside one consistent navigation and header</div>
-              </div>
-              <div className="rounded-[1.75rem] bg-white/8 p-5 sm:col-span-2">
-                <div className="flex items-start gap-3">
-                  <BookCheck className="mt-1 h-5 w-5 text-emerald-300" />
-                  <div>
-                    <div className="font-semibold text-white">Readable Bangla layout</div>
-                    <div className="mt-1 text-sm leading-6 text-zinc-300">
-                      oversized gaps, broken alignment আর low-contrast actions বাদ দিয়ে purposeful typography and spacing ব্যবহার করা হয়েছে।
-                    </div>
-                  </div>
+        {/* How it works Section */}
+        <section className="py-24 sm:py-32 bg-slate-50 relative">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="grid lg:grid-cols-2 gap-16 items-center">
+              <div>
+                <h2 className="text-3xl font-black text-primary sm:text-4xl mb-6">কীভাবে কাজ করে?</h2>
+                <p className="text-lg text-slate-600 mb-12 font-medium">মাত্র ৩টি সহজ ধাপে আপনার সম্পূর্ণ প্রশ্নপত্র প্রস্তুত হয়ে যাবে ডাউনলোডের জন্য।</p>
+
+                <div className="space-y-10">
+                  {workflowSteps.map((step, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: index * 0.15 }}
+                      className="flex gap-6 group"
+                    >
+                      <div className="flex flex-col items-center">
+                        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-accent text-white text-xl font-black shadow-lg shadow-accent/20 transition-transform group-hover:scale-110 group-hover:rotate-3">
+                          {index + 1}
+                        </div>
+                        {index < workflowSteps.length - 1 && (
+                          <div className="w-0.5 h-full bg-slate-200 mt-4 group-hover:bg-accent/40 transition-colors" />
+                        )}
+                      </div>
+                      <div className="pb-8 pt-2 space-y-2">
+                        <h4 className="text-xl font-bold text-slate-900 group-hover:text-primary transition-colors">{step.title}</h4>
+                        <p className="text-slate-600 leading-relaxed font-medium">{step.description}</p>
+                      </div>
+                    </motion.div>
+                  ))}
                 </div>
               </div>
+
+              {/* Visual representation */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                className="relative lg:ml-auto w-full max-w-md mx-auto"
+              >
+                <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-accent/10 rounded-[3rem] transform rotate-3 scale-105 -z-10 transition-transform duration-500 hover:rotate-6" />
+                <div className="rounded-[2.5rem] bg-white p-3 shadow-2xl shadow-primary/10 border border-slate-100">
+                  <div className="rounded-[2rem] bg-slate-50 border border-slate-100 p-6 flex flex-col gap-5 h-[400px]">
+                    <div className="flex items-center gap-3 border-b border-slate-200 pb-4">
+                      <div className="flex gap-1.5">
+                        <div className="w-3 h-3 rounded-full bg-[#ff5f57]" />
+                        <div className="w-3 h-3 rounded-full bg-[#febc2e]" />
+                        <div className="w-3 h-3 rounded-full bg-[#28c840]" />
+                      </div>
+                      <div className="flex-1 h-6 bg-white rounded-md border border-slate-200 flex items-center px-3">
+                        <div className="w-2/3 h-2 bg-slate-200 rounded-full" />
+                      </div>
+                    </div>
+
+                    <div className="flex-1 flex flex-col justify-center space-y-4">
+                      <div className="flex items-center gap-4 bg-white p-4 rounded-2xl shadow-sm border border-slate-100 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100 fill-mode-both">
+                        <CheckCircle2 className="w-6 h-6 text-emerald-500" />
+                        <div className="h-2 w-3/4 bg-slate-200 rounded-full" />
+                      </div>
+                      <div className="flex items-center gap-4 bg-white p-4 rounded-2xl shadow-sm border border-slate-100 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200 fill-mode-both">
+                        <FileText className="w-6 h-6 text-accent" />
+                        <div className="h-2 w-1/2 bg-slate-200 rounded-full" />
+                      </div>
+                      <div className="p-4 bg-primary/5 rounded-2xl border border-primary/10 mt-2 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300 fill-mode-both">
+                        <div className="h-2 w-full bg-primary/20 rounded-full mb-3" />
+                        <div className="h-2 w-5/6 bg-primary/20 rounded-full mb-3" />
+                        <div className="h-2 w-4/6 bg-primary/20 rounded-full" />
+                      </div>
+                    </div>
+
+                    <Button variant="accent" className="w-full text-white shadow-md rounded-xl h-12 font-bold animate-in fade-in slide-in-from-bottom-4 duration-500 delay-500 fill-mode-both">
+                      <Download className="w-4 h-4 mr-2" />
+                      PDF ডাউনলোড
+                    </Button>
+                  </div>
+                </div>
+              </motion.div>
             </div>
           </div>
         </section>
 
-        <section id="cta" className="px-4 pb-20 pt-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-6xl rounded-[2.5rem] border border-primary/10 bg-white/88 px-6 py-10 shadow-xl shadow-emerald-900/5 sm:px-10 lg:flex lg:items-center lg:justify-between">
-            <div className="max-w-3xl">
-              <div className="text-sm font-semibold uppercase tracking-[0.24em] text-primary/80">Start Building</div>
-              <h2 className="mt-3 text-3xl font-black tracking-tight text-zinc-950 md:text-4xl">
-                QuestionCraft BD-কে polished এবং usable workspace হিসেবে ব্যবহার শুরু করুন
-              </h2>
-              <p className="mt-4 text-base leading-7 text-zinc-600">
-                শিক্ষক, academic admin, coaching team বা paper setter যেই হোন, এখন থেকে structure আর style দুটোই একই product-এ পাবেন।
-              </p>
-            </div>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row lg:mt-0">
-              <Button size="lg" asChild>
-                <Link href="/register">রেজিস্ট্রেশন করুন</Link>
-              </Button>
-              <Button size="lg" variant="secondary" asChild>
-                <Link href="/login">লগইন করুন</Link>
-              </Button>
-            </div>
-          </div>
-        </section>
       </main>
 
-      <footer className="border-t border-black/5 bg-white/70 px-4 py-10 backdrop-blur-xl sm:px-6 lg:px-8">
-        <div className="mx-auto flex max-w-7xl flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-          <div>
+      {/* Footer */}
+      <footer className="border-t border-slate-200 bg-white py-10 mt-auto">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
             <BrandMark />
-            <p className="mt-4 max-w-xl text-sm leading-6 text-zinc-500">
-              React + Next.js frontend, Supabase auth/data layer, এবং professional aligned layout system দিয়ে তৈরি QuestionCraft BD workspace।
+            <p className="text-sm text-slate-500 font-medium text-center">
+              © ২০২৬ QuestionCraft BD. সর্বস্বত্ব সংরক্ষিত।
             </p>
-          </div>
-          <div className="flex flex-wrap items-center gap-5 text-sm font-semibold text-zinc-500">
-            <Link href="/legal/terms" className="hover:text-primary">ব্যবহারের শর্তাবলী</Link>
-            <Link href="/legal/privacy" className="hover:text-primary">প্রাইভেসি পলিসি</Link>
-            <span>© ২০২৬ QuestionCraft BD</span>
+            <div className="flex gap-6 text-sm font-bold text-slate-600">
+              <Link href="/legal/terms" className="hover:text-primary transition-colors">শর্তাবলী</Link>
+              <Link href="/legal/privacy" className="hover:text-primary transition-colors">প্রাইভেসি</Link>
+            </div>
           </div>
         </div>
       </footer>

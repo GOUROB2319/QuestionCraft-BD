@@ -24,6 +24,52 @@ export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState<TabType>('profile');
   const [userProfile, setUserProfile] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [passwordState, setPasswordState] = useState({
+    currentPassword: '',
+    newPassword: '',
+  });
+
+  const handlePasswordUpdate = async () => {
+    if (!passwordState.newPassword || passwordState.newPassword.length < 8) {
+      toast.error('পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে।');
+      return;
+    }
+
+    if (!passwordState.currentPassword) {
+      toast.error('বর্তমান পাসওয়ার্ড টাইপ করুন।');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      // First verify current password by trying to sign in
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user?.email) throw new Error('User not found');
+
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: user.email,
+        password: passwordState.currentPassword,
+      });
+
+      if (signInError) {
+        toast.error('বর্তমান পাসওয়ার্ডটি সঠিক নয়।');
+        return;
+      }
+
+      const { error } = await supabase.auth.updateUser({
+        password: passwordState.newPassword
+      });
+
+      if (error) throw error;
+
+      toast.success('পাসওয়ার্ড সফলভাবে আপডেট হয়েছে।');
+      setPasswordState({ currentPassword: '', newPassword: '' });
+    } catch (err: any) {
+      toast.error('ত্রুটি: ' + (err.message || 'পাসওয়ার্ড আপডেট করা যায়নি।'));
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const t = {
     bn: {
@@ -259,18 +305,32 @@ export default function SettingsPage() {
                   </h3>
                   <div className="space-y-2">
                     <label className="text-sm font-medium">{t.security.currentPassword}</label>
-                    <Input type="password" />
+                    <Input
+                      type="password"
+                      value={passwordState.currentPassword}
+                      onChange={(e) => setPasswordState({ ...passwordState, currentPassword: e.target.value })}
+                    />
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium">{t.security.newPassword}</label>
-                    <Input type="password" />
+                    <Input
+                      type="password"
+                      value={passwordState.newPassword}
+                      onChange={(e) => setPasswordState({ ...passwordState, newPassword: e.target.value })}
+                    />
                     <div className="flex gap-1 mt-2">
-                      <div className="h-1 flex-1 bg-zinc-200 rounded-full" />
-                      <div className="h-1 flex-1 bg-zinc-200 rounded-full" />
-                      <div className="h-1 flex-1 bg-zinc-200 rounded-full" />
+                      <div className={cn("h-1 flex-1 rounded-full", passwordState.newPassword.length > 0 ? "bg-emerald-500" : "bg-zinc-200")} />
+                      <div className={cn("h-1 flex-1 rounded-full", passwordState.newPassword.length > 8 ? "bg-emerald-500" : "bg-zinc-200")} />
+                      <div className={cn("h-1 flex-1 rounded-full", passwordState.newPassword.length > 12 ? "bg-emerald-500" : "bg-zinc-200")} />
                     </div>
                   </div>
-                  <Button className="mt-2 text-white bg-zinc-900 hover:bg-zinc-800">{t.security.updatePassword}</Button>
+                  <Button
+                    className="mt-2 text-white bg-zinc-900 hover:bg-zinc-800"
+                    onClick={handlePasswordUpdate}
+                    disabled={isLoading}
+                  >
+                    {isLoading ? 'আপডেট হচ্ছে...' : t.security.updatePassword}
+                  </Button>
                 </div>
 
                 <div className="border border-zinc-200 rounded-xl p-6 flex items-center justify-between">

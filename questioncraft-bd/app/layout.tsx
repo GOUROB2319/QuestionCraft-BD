@@ -1,11 +1,11 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Hind_Siliguri, Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import { Toaster } from "sonner";
 
 const hindSiliguri = Hind_Siliguri({
-  subsets: ["latin"],
+  subsets: ["bengali", "latin"],
   weight: ["300", "400", "500", "600", "700"],
   variable: "--font-hind-siliguri",
   display: "swap",
@@ -22,6 +22,11 @@ export const metadata: Metadata = {
   description:
     "বাংলাদেশের শিক্ষকদের জন্য তৈরি QuestionCraft BD এখন NCTB-সামঞ্জস্যপূর্ণ প্রশ্নপত্র, মূল্যায়ন কাঠামো এবং দ্রুত PDF এক্সপোর্টকে এক জায়গায় আনে।",
   keywords: ["প্রশ্নপত্র", "Bangladesh", "Education", "AI", "NCTB", "শিক্ষক"],
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({
