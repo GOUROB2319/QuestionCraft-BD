@@ -1,13 +1,20 @@
 // js/auth.js
 
-async function signUp(email, password, fullName, institution) {
+async function signUp(email, password, profile = {}, institutionName) {
+    const normalizedProfile = typeof profile === 'object' && profile !== null
+        ? profile
+        : {
+            full_name: profile,
+            institution: institutionName
+        };
+
     const { data, error } = await window.supabase.auth.signUp({
         email,
         password,
         options: {
             data: {
-                full_name: fullName,
-                institution: institution
+                full_name: normalizedProfile.full_name || '',
+                institution: normalizedProfile.institution || ''
             }
         }
     });

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Question Bank - QuestionCraft BD</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="../../css/global.css">
+</head>
+
+<body class="bg-slate-50 dark:bg-slate-950 font-display text-slate-900 transition-colors duration-300">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="w-72 glass dark:glass-dark flex flex-col border-r border-white/10 z-20">
+            <div class="p-8 flex items-center gap-4">
+                <div class="bg-emerald-500 p-2 rounded-2xl shadow-lg shadow-emerald-500/20">
+                    <span class="material-symbols-outlined text-white text-3xl">quiz</span>
+                </div>
+                <div>
+                    <h1 class="text-xl font-extrabold tracking-tighter text-gradient">QC BD</h1>
+                    <p class="text-[10px] uppercase tracking-widest font-bold text-slate-400">Educator Portal</p>
+                </div>
+            </div>
+
+            <nav class="flex-1 px-4 space-y-2 mt-4 custom-scrollbar">
+                <a href="../dashboard/index.html"
+                    class="flex items-center gap-4 px-4 py-3 rounded-2xl text-slate-500 hover:bg-white/10 transition-all group">
+                    <span
+                        class="material-symbols-outlined group-hover:text-emerald-500 transition-colors">dashboard</span>
+                    <span class="font-bold">Dashboard</span>
+                </a>
+                <a href="../editor/index.html"
+                    class="flex items-center gap-4 px-4 py-3 rounded-2xl text-slate-500 hover:bg-white/10 transition-all group">
+                    <span
+                        class="material-symbols-outlined group-hover:text-emerald-500 transition-colors">description</span>
+                    <span class="font-bold">My Questions</span>
+                </a>
+                <a href="#"
+                    class="flex items-center gap-4 px-4 py-3 rounded-2xl bg-emerald-500 text-white shadow-xl shadow-emerald-500/20 active:scale-95 transition-all">
+                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">database</span>
+                    <span class="font-bold">Question Bank</span>
+                </a>
+                <div class="pt-6 pb-2 px-6">
+                    <p class="text-[10px] uppercase tracking-widest text-slate-400 font-bold">Preferences</p>
+                </div>
+                <a href="../settings/index.html"
+                    class="flex items-center gap-4 px-4 py-3 rounded-2xl text-slate-500 hover:bg-white/10 transition-all group">
+                    <span
+                        class="material-symbols-outlined group-hover:text-emerald-500 transition-colors">settings</span>
+                    <span class="font-bold">Settings</span>
+                </a>
+            </nav>
+
+            <div class="p-6 text-center">
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Empowering Educators</p>
+                <div class="h-1 w-12 bg-emerald-500 mx-auto rounded-full"></div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col min-w-0 overflow-hidden relative">
+            <!-- Header -->
+            <header
+                class="h-20 glass dark:glass-dark border-b border-white/5 flex items-center justify-between px-10 z-10">
+                <div class="flex-1 max-w-xl">
+                    <div class="relative group">
+                        <span
+                            class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+                        <input
+                            class="w-full glass dark:glass-dark border border-white/10 rounded-2xl pl-12 pr-6 py-3 text-sm focus:ring-2 focus:ring-emerald-500/20 transition-all font-bengali"
+                            placeholder="লাইব্রেরি জুড়ে খুঁজুন..." type="text" />
+                    </div>
+                </div>
+                <div class="flex items-center gap-6">
+                    <div class="flex bg-white/5 p-1 rounded-2xl border border-white/10">
+                        <button
+                            class="px-4 py-2 text-xs font-bold rounded-xl bg-emerald-500 text-white shadow-lg shadow-emerald-500/20">BN</button>
+                        <button class="px-4 py-2 text-xs font-bold text-slate-400 hover:text-slate-900">EN</button>
+                    </div>
+                    <button
+                        class="p-3 glass dark:glass-dark rounded-2xl text-slate-500 hover:text-emerald-500 transition-all relative">
+                        <span class="material-symbols-outlined">notifications</span>
+                        <span
+                            class="absolute top-3 right-3 size-2 bg-rose-500 rounded-full border-2 border-white"></span>
+                    </button>
+                    <div class="h-8 w-px bg-white/10"></div>
+                    <div class="flex items-center gap-4 shrink-0">
+                        <div class="text-right">
+                            <p class="text-sm font-black">Dr. Sarah Ahmed</p>
+                            <p class="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">Senior Educator
+                            </p>
+                        </div>
+                        <div
+                            class="size-11 rounded-2xl border-2 border-emerald-500 p-0.5 shadow-lg shadow-emerald-500/10">
+                            <img class="w-full h-full object-cover rounded-xl"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCXXBn2sKUI8tB32-plreF5sDOFUN9cLCXVEqzbSwfES66bR5xq5CXRQ484qczXmGBvSWW9xl3_4prcoh2EG0RBExzfzBIfkY6UpoQBQbHP8kdnrQKpgo23jPdy1Q0VS0zy60UamfBj5cFbFWP4yavQckJscpn12kkq2_OhC6SElOlXAu2CmWEUnCDOrOGAAjWIJN2JOEq_p21LxDxOdpJ-II8_pMtCDmnfoiLlYe4f5B7Kmmwp7KlTO8DTB4bg9dwEv_mU256uq6P"
+                                alt="Avatar">
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Scroll Area -->
+            <main class="flex-1 overflow-y-auto p-12 custom-scrollbar">
+                <div class="max-w-7xl mx-auto space-y-12">
+                    <!-- Page Hero -->
+                    <div class="flex flex-col md:flex-row md:items-end justify-between gap-8 animate-slide-up">
+                        <div class="space-y-3">
+                            <h2 class="text-5xl font-black tracking-tighter text-gradient leading-tight">Question Bank
+                            </h2>
+                            <p class="text-slate-500 font-medium text-lg max-w-2xl">Access thousands of curated
+                                questions across all NCTB subjects and classes.</p>
+                        </div>
+                        <button class="btn-premium flex items-center gap-3">
+                            <span class="material-symbols-outlined">add_circle</span>
+                            Contribute Question
+                        </button>
+                    </div>
+
+                    <!-- Filter Area -->
+                    <section class="card-premium p-8 animate-fade-in-up">
+                        <div class="flex flex-wrap items-center gap-8">
+                            <div class="flex-1 min-w-[240px] space-y-3">
+                                <label
+                                    class="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">Subject
+                                    / বিষয়</label>
+                                <select
+                                    class="w-full glass dark:glass-dark border border-white/10 rounded-2xl px-6 py-4 text-sm font-bold focus:ring-2 focus:ring-emerald-500/20 transition-all font-bengali">
+                                    <option>পদার্থবিজ্ঞান (Physics)</option>
+                                    <option>রসায়ন (Chemistry)</option>
+                                    <option>জীববিজ্ঞান (Biology)</option>
+                                    <option>উচ্চতর গণিত (Higher Math)</option>
+                                </select>
+                            </div>
+                            <div class="w-full md:w-48 space-y-3">
+                                <label
+                                    class="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">Class</label>
+                                <select
+                                    class="w-full glass dark:glass-dark border border-white/10 rounded-2xl px-6 py-4 text-sm font-bold focus:ring-2 focus:ring-emerald-500/20 transition-all">
+                                    <option>Class 9</option>
+                                    <option>Class 10</option>
+                                    <option>HSC 1st Year</option>
+                                    <option>HSC 2nd Year</option>
+                                </select>
+                            </div>
+                            <div class="w-full md:w-auto space-y-3">
+                                <label
+                                    class="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">Question
+                                    Type</label>
+                                <div class="flex gap-3">
+                                    <button
+                                        class="px-6 py-3 rounded-2xl glass font-bold text-sm bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">MCQ</button>
+                                    <button
+                                        class="px-6 py-3 rounded-2xl glass font-bold text-sm hover:bg-emerald-500/10 hover:text-emerald-500 transition-all border border-white/10">Creative</button>
+                                    <button
+                                        class="px-6 py-3 rounded-2xl glass font-bold text-sm hover:bg-emerald-500/10 hover:text-emerald-500 transition-all border border-white/10">Short</button>
+                                </div>
+                            </div>
+                            <button class="mt-auto py-4 px-6 text-emerald-500 font-bold text-sm hover:underline">Clear
+                                Filters</button>
+                        </div>
+                    </section>
+
+                    <!-- Questions Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <!-- Card 1 -->
+                        <div class="card-premium p-8 group hover:scale-[1.02] transition-all duration-500 animate-slide-up"
+                            style="animation-delay: 100ms">
+                            <div class="flex justify-between items-start mb-6">
+                                <span
+                                    class="px-3 py-1 bg-emerald-500/10 text-emerald-500 text-[10px] font-black uppercase tracking-widest rounded-full border border-emerald-500/20">Physics
+                                    • Class 10</span>
+                                <span
+                                    class="material-symbols-outlined text-slate-300 group-hover:text-emerald-500 transition-colors">bookmark</span>
+                            </div>
+                            <p class="text-xl font-bold mb-8 leading-relaxed font-bengali min-h-[5.5rem] line-clamp-3">
+                                নিউটনের গতির দ্বিতীয় সূত্রটি ব্যাখ্যা করো এবং বলের একক প্রতিপাদন করো।</p>
+                            <div class="flex items-center gap-6 mb-8 text-slate-400">
+                                <div class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-lg">hotel_class</span>
+                                    <span class="text-xs font-bold uppercase tracking-widest">5 Marks</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-lg">category</span>
+                                    <span class="text-xs font-bold uppercase tracking-widest">Creative</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between pt-6 border-t border-white/5">
+                                <div class="flex gap-2">
+                                    <button class="p-3 glass rounded-xl hover:text-emerald-500 transition-all"><span
+                                            class="material-symbols-outlined text-xl">visibility</span></button>
+                                    <button class="p-3 glass rounded-xl hover:text-emerald-500 transition-all"><span
+                                            class="material-symbols-outlined text-xl">add_to_photos</span></button>
+                                </div>
+                                <button class="btn-premium px-6 py-2.5 text-xs">Add to Paper</button>
+                            </div>
+                        </div>
+
+                        <!-- Card 2 -->
+                        <div class="card-premium p-8 group hover:scale-[1.02] transition-all duration-500 animate-slide-up"
+                            style="animation-delay: 200ms">
+                            <div class="flex justify-between items-start mb-6">
+                                <span
+                                    class="px-3 py-1 bg-emerald-500/10 text-emerald-500 text-[10px] font-black uppercase tracking-widest rounded-full border border-emerald-500/20">Chemistry
+                                    • HSC 1st</span>
+                                <span
+                                    class="material-symbols-outlined text-slate-300 group-hover:text-emerald-500 transition-colors">bookmark</span>
+                            </div>
+                            <p
+                                class="text-xl font-bold mb-8 leading-relaxed font-bengali min-h-[5.5rem] line-clamp-3 text-gradient">
+                                নিচের কোন মৌলটির ইলেকট্রন আসক্তি সবচেয়ে বেশি? ক) ক্লোরিন খ) ফ্লোরিন গ) অক্সিজেন ঘ)
+                                সালফার</p>
+                            <div class="flex items-center gap-6 mb-8 text-slate-400">
+                                <div class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-lg">hotel_class</span>
+                                    <span class="text-xs font-bold uppercase tracking-widest">1 Mark</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-lg">checklist</span>
+                                    <span class="text-xs font-bold uppercase tracking-widest">MCQ</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between pt-6 border-t border-white/5">
+                                <div class="flex gap-2">
+                                    <button class="p-3 glass rounded-xl hover:text-emerald-500 transition-all"><span
+                                            class="material-symbols-outlined text-xl">visibility</span></button>
+                                    <button class="p-3 glass rounded-xl hover:text-emerald-500 transition-all"><span
+                                            class="material-symbols-outlined text-xl">add_to_photos</span></button>
+                                </div>
+                                <button class="btn-premium px-6 py-2.5 text-xs">Add to Paper</button>
+                            </div>
+                        </div>
+
+                        <!-- Card 3 -->
+                        <div class="card-premium p-8 group hover:scale-[1.02] transition-all duration-500 animate-slide-up"
+                            style="animation-delay: 300ms">
+                            <div class="flex justify-between items-start mb-6">
+                                <span
+                                    class="px-3 py-1 bg-emerald-500/10 text-emerald-500 text-[10px] font-black uppercase tracking-widest rounded-full border border-emerald-500/20">Biology
+                                    • Class 9</span>
+                                <span
+                                    class="material-symbols-outlined text-slate-300 group-hover:text-emerald-500 transition-colors">bookmark</span>
+                            </div>
+                            <p class="text-xl font-bold mb-8 leading-relaxed font-bengali min-h-[5.5rem] line-clamp-3">
+                                উদ্ভিদ ও প্রাণিকোষের মধ্যে প্রধান তিনটি পার্থক্য চিত্রসহ আলোচনা করো।</p>
+                            <div class="flex items-center gap-6 mb-8 text-slate-400">
+                                <div class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-lg">hotel_class</span>
+                                    <span class="text-xs font-bold uppercase tracking-widest">10 Marks</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-lg">architecture</span>
+                                    <span class="text-xs font-bold uppercase tracking-widest">Creative</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between pt-6 border-t border-white/5">
+                                <div class="flex gap-2">
+                                    <button class="p-3 glass rounded-xl hover:text-emerald-500 transition-all"><span
+                                            class="material-symbols-outlined text-xl">visibility</span></button>
+                                    <button class="p-3 glass rounded-xl hover:text-emerald-500 transition-all"><span
+                                            class="material-symbols-outlined text-xl">add_to_photos</span></button>
+                                </div>
+                                <button class="btn-premium px-6 py-2.5 text-xs">Add to Paper</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="flex items-center justify-between border-t border-white/10 pt-10 pb-20 animate-fade-in">
+                        <p class="text-sm font-bold text-slate-400">Showing <span
+                                class="text-slate-900 dark:text-white">1-24</span> of <span
+                                class="text-slate-900 dark:text-white">1,247</span> questions</p>
+                        <div class="flex items-center gap-3">
+                            <button
+                                class="size-12 rounded-2xl glass flex items-center justify-center text-slate-400 hover:text-emerald-500 transition-all border border-white/10 disabled:opacity-30"
+                                disabled>
+                                <span class="material-symbols-outlined">chevron_left</span>
+                            </button>
+                            <button
+                                class="size-12 rounded-2xl bg-emerald-500 text-white font-black shadow-lg shadow-emerald-500/20">1</button>
+                            <button
+                                class="size-12 rounded-2xl glass font-black text-slate-400 hover:text-emerald-500 transition-all border border-white/10">2</button>
+                            <button
+                                class="size-12 rounded-2xl glass font-black text-slate-400 hover:text-emerald-500 transition-all border border-white/10">3</button>
+                            <button
+                                class="size-12 rounded-2xl glass flex items-center justify-center text-slate-400 hover:text-emerald-500 transition-all border border-white/10">
+                                <span class="material-symbols-outlined">chevron_right</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+
+</html>

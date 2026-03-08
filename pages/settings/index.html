@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Settings - QuestionCraft BD</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="../../css/global.css">
+</head>
+
+<body class="bg-slate-50 dark:bg-slate-950 font-display text-slate-900 transition-colors duration-300">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="w-72 glass dark:glass-dark flex flex-col border-r border-white/10 z-20">
+            <div class="p-8 flex items-center gap-4">
+                <div class="bg-emerald-500 p-2 rounded-2xl shadow-lg shadow-emerald-500/20">
+                    <span class="material-symbols-outlined text-white text-3xl">quiz</span>
+                </div>
+                <div>
+                    <h1 class="text-xl font-extrabold tracking-tighter text-gradient">QC BD</h1>
+                    <p class="text-[10px] uppercase tracking-widest font-bold text-slate-400">Educator Portal</p>
+                </div>
+            </div>
+
+            <nav class="flex-1 px-4 space-y-2 mt-4 custom-scrollbar">
+                <a href="../dashboard/index.html"
+                    class="flex items-center gap-4 px-4 py-3 rounded-2xl text-slate-500 hover:bg-white/10 transition-all group">
+                    <span
+                        class="material-symbols-outlined group-hover:text-emerald-500 transition-colors">dashboard</span>
+                    <span class="font-bold">Dashboard</span>
+                </a>
+                <a href="../editor/index.html"
+                    class="flex items-center gap-4 px-4 py-3 rounded-2xl text-slate-500 hover:bg-white/10 transition-all group">
+                    <span
+                        class="material-symbols-outlined group-hover:text-emerald-500 transition-colors">description</span>
+                    <span class="font-bold">My Questions</span>
+                </a>
+                <a href="../question-bank/index.html"
+                    class="flex items-center gap-4 px-4 py-3 rounded-2xl text-slate-500 hover:bg-white/10 transition-all group">
+                    <span
+                        class="material-symbols-outlined group-hover:text-emerald-500 transition-colors">database</span>
+                    <span class="font-bold">Question Bank</span>
+                </a>
+                <div class="pt-6 pb-2 px-6">
+                    <p class="text-[10px] uppercase tracking-widest text-slate-400 font-bold">Preferences</p>
+                </div>
+                <a href="#"
+                    class="flex items-center gap-4 px-4 py-3 rounded-2xl bg-emerald-500 text-white shadow-xl shadow-emerald-500/20 active:scale-95 transition-all">
+                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">settings</span>
+                    <span class="font-bold">Settings</span>
+                </a>
+            </nav>
+
+            <div class="p-6">
+                <div class="glass dark:glass-dark rounded-3xl p-5 border border-white/10 animate-fade-in-up">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Current Plan</p>
+                    <p class="text-lg font-black text-emerald-500 mb-4">Premium Educator</p>
+                    <button
+                        class="w-full py-3 bg-white/10 hover:bg-white/20 text-xs font-bold rounded-2xl transition-all border border-white/5">
+                        View Billing
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col min-w-0 overflow-hidden relative">
+            <!-- Header -->
+            <header
+                class="h-20 glass dark:glass-dark border-b border-white/5 flex items-center justify-between px-10 z-10">
+                <div class="flex-1 max-w-xl">
+                    <div class="relative group">
+                        <span
+                            class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+                        <input
+                            class="w-full glass dark:glass-dark border border-white/10 rounded-2xl pl-12 pr-6 py-3 text-sm focus:ring-2 focus:ring-emerald-500/20 transition-all"
+                            placeholder="Search settings..." type="text" />
+                    </div>
+                </div>
+                <div class="flex items-center gap-6">
+                    <button
+                        class="p-3 glass dark:glass-dark rounded-2xl text-slate-500 hover:text-emerald-500 transition-all relative">
+                        <span class="material-symbols-outlined">notifications</span>
+                        <span
+                            class="absolute top-3 right-3 size-2 bg-rose-500 rounded-full border-2 border-white"></span>
+                    </button>
+                    <div class="h-8 w-px bg-white/10"></div>
+                    <div class="flex items-center gap-4 shrink-0">
+                        <div class="text-right">
+                            <p class="text-sm font-black">Dr. Sarah Ahmed</p>
+                            <p class="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">Physics Expert
+                            </p>
+                        </div>
+                        <div
+                            class="size-11 rounded-2xl border-2 border-emerald-500 p-0.5 shadow-lg shadow-emerald-500/10">
+                            <img class="w-full h-full object-cover rounded-xl"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCXXBn2sKUI8tB32-plreF5sDOFUN9cLCXVEqzbSwfES66bR5xq5CXRQ484qczXmGBvSWW9xl3_4prcoh2EG0RBExzfzBIfkY6UpoQBQbHP8kdnrQKpgo23jPdy1Q0VS0zy60UamfBj5cFbFWP4yavQckJscpn12kkq2_OhC6SElOlXAu2CmWEUnCDOrOGAAjWIJN2JOEq_p21LxDxOdpJ-II8_pMtCDmnfoiLlYe4f5B7Kmmwp7KlTO8DTB4bg9dwEv_mU256uq6P"
+                                alt="Avatar">
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Scroll Area -->
+            <main class="flex-1 overflow-y-auto p-12 custom-scrollbar">
+                <div class="max-w-6xl mx-auto flex flex-col lg:flex-row gap-12">
+                    <!-- Settings Sidebar Navigation -->
+                    <div class="w-full lg:w-72 shrink-0 space-y-8 animate-slide-up">
+                        <div>
+                            <h2 class="text-4xl font-black tracking-tighter text-gradient mb-2">Settings</h2>
+                            <p class="text-slate-500 font-medium">Personalize your educator experience.</p>
+                        </div>
+                        <nav class="space-y-3">
+                            <a href="#"
+                                class="flex items-center justify-between px-6 py-4 glass dark:glass-dark bg-emerald-500/10 border-l-4 border-emerald-500 text-emerald-500 font-black rounded-r-2xl animate-fade-in shadow-sm">
+                                <div class="flex items-center gap-3">
+                                    <span class="material-symbols-outlined">person</span>
+                                    <span>Profile Info</span>
+                                </div>
+                                <span class="material-symbols-outlined text-sm">chevron_right</span>
+                            </a>
+                            <a href="#"
+                                class="flex items-center justify-between px-6 py-4 text-slate-500 hover:glass transition-all rounded-2xl group">
+                                <div class="flex items-center gap-3">
+                                    <span class="material-symbols-outlined group-hover:text-emerald-500">shield</span>
+                                    <span class="font-bold">Security</span>
+                                </div>
+                                <span
+                                    class="material-symbols-outlined text-sm opacity-0 group-hover:opacity-100 transition-all">chevron_right</span>
+                            </a>
+                            <a href="#"
+                                class="flex items-center justify-between px-6 py-4 text-slate-500 hover:glass transition-all rounded-2xl group">
+                                <div class="flex items-center gap-3">
+                                    <span
+                                        class="material-symbols-outlined group-hover:text-emerald-500">notifications</span>
+                                    <span class="font-bold">Notifications</span>
+                                </div>
+                                <span
+                                    class="material-symbols-outlined text-sm opacity-0 group-hover:opacity-100 transition-all">chevron_right</span>
+                            </a>
+                            <a href="#"
+                                class="flex items-center justify-between px-6 py-4 text-slate-500 hover:glass transition-all rounded-2xl group">
+                                <div class="flex items-center gap-3">
+                                    <span class="material-symbols-outlined group-hover:text-emerald-500">palette</span>
+                                    <span class="font-bold">Appearance</span>
+                                </div>
+                                <span
+                                    class="material-symbols-outlined text-sm opacity-0 group-hover:opacity-100 transition-all">chevron_right</span>
+                            </a>
+                        </nav>
+                    </div>
+
+                    <!-- Content Panel -->
+                    <div class="flex-1 space-y-8 animate-fade-in-up">
+                        <div class="card-premium p-10 space-y-10">
+                            <!-- Profile Header -->
+                            <div class="flex flex-col sm:flex-row items-center gap-10 border-b border-white/5 pb-10">
+                                <div class="relative group">
+                                    <div
+                                        class="size-32 rounded-3xl overflow-hidden border-4 border-white/10 shadow-2xl transition-transform group-hover:scale-105 duration-500">
+                                        <img class="w-full h-full object-cover"
+                                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCXXBn2sKUI8tB32-plreF5sDOFUN9cLCXVEqzbSwfES66bR5xq5CXRQ484qczXmGBvSWW9xl3_4prcoh2EG0RBExzfzBIfkY6UpoQBQbHP8kdnrQKpgo23jPdy1Q0VS0zy60UamfBj5cFbFWP4yavQckJscpn12kkq2_OhC6SElOlXAu2CmWEUnCDOrOGAAjWIJN2JOEq_p21LxDxOdpJ-II8_pMtCDmnfoiLlYe4f5B7Kmmwp7KlTO8DTB4bg9dwEv_mU256uq6P"
+                                            alt="Sarah Ahmed">
+                                    </div>
+                                    <button
+                                        class="absolute -bottom-2 -right-2 size-10 bg-emerald-500 text-white rounded-2xl flex items-center justify-center border-4 border-white dark:border-slate-800 shadow-xl hover:rotate-12 transition-all">
+                                        <span class="material-symbols-outlined text-lg">photo_camera</span>
+                                    </button>
+                                </div>
+                                <div class="space-y-4 text-center sm:text-left">
+                                    <div>
+                                        <h3 class="text-2xl font-black tracking-tight">Public Profile</h3>
+                                        <p class="text-slate-500 font-medium">Update your photo and teacher credentials.
+                                        </p>
+                                    </div>
+                                    <div class="flex gap-4 justify-center sm:justify-start">
+                                        <button
+                                            class="px-6 py-2.5 bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-emerald-500/20">Change
+                                            Photo</button>
+                                        <button
+                                            class="px-6 py-2.5 glass text-rose-500 text-xs font-bold rounded-xl border border-rose-500/10">Remove</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Settings Form -->
+                            <form class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div class="space-y-3">
+                                    <label class="text-sm font-bold text-slate-500 uppercase tracking-widest pl-1">Full
+                                        Name</label>
+                                    <input
+                                        class="w-full glass dark:glass-dark border border-white/10 rounded-2xl px-6 py-4 text-sm font-bold focus:ring-2 focus:ring-emerald-500/20 transition-all"
+                                        value="Dr. Sarah Ahmed" type="text" />
+                                </div>
+                                <div class="space-y-3">
+                                    <label
+                                        class="text-sm font-bold text-slate-500 uppercase tracking-widest pl-1">Educational
+                                        Role</label>
+                                    <input
+                                        class="w-full glass dark:glass-dark border border-white/10 rounded-2xl px-6 py-4 text-sm font-bold focus:ring-2 focus:ring-emerald-500/20 transition-all"
+                                        value="Senior Physics Lecturer" type="text" />
+                                </div>
+                                <div class="space-y-3 md:col-span-2">
+                                    <label
+                                        class="text-sm font-bold text-slate-500 uppercase tracking-widest pl-1">Institution</label>
+                                    <input
+                                        class="w-full glass dark:glass-dark border border-white/10 rounded-2xl px-6 py-4 text-sm font-bold focus:ring-2 focus:ring-emerald-500/20 transition-all"
+                                        value="Dhaka Residential Model College" type="text" />
+                                </div>
+                                <div class="space-y-3">
+                                    <label
+                                        class="text-sm font-bold text-slate-500 uppercase tracking-widest pl-1">Primary
+                                        Subject</label>
+                                    <select
+                                        class="w-full glass dark:glass-dark border border-white/10 rounded-2xl px-6 py-4 text-sm font-bold focus:ring-2 focus:ring-emerald-500/20 transition-all appearance-none cursor-pointer">
+                                        <option selected>Physics</option>
+                                        <option>Higher Mathematics</option>
+                                        <option>ICT</option>
+                                    </select>
+                                </div>
+                                <div class="space-y-3">
+                                    <label class="text-sm font-bold text-slate-500 uppercase tracking-widest pl-1">Email
+                                        Address</label>
+                                    <div class="relative">
+                                        <input
+                                            class="w-full glass dark:glass-dark border border-white/10 rounded-2xl px-6 py-4 text-sm font-bold text-slate-400 cursor-not-allowed"
+                                            value="sarah.ahmed@example.com" readonly type="email" />
+                                        <span
+                                            class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-emerald-500">verified</span>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <!-- Save Actions -->
+                            <div class="pt-10 flex flex-col sm:flex-row justify-end gap-6">
+                                <button
+                                    class="px-10 py-4 font-black text-slate-400 hover:text-slate-900 transition-all">Discard
+                                    Changes</button>
+                                <button class="btn-premium px-12">Save Profile Info</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+
+</html>
