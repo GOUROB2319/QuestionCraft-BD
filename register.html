@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+
+<html lang="bn">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>নিবন্ধন করুন - QuestionCraft BD</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/auth.js"></script>
+    <link href="css/global.css" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const registerForm = document.querySelector('form');
+            const fullNameInput = document.querySelector('input[placeholder="আপনার পূর্ণ নাম"]');
+            const emailInput = document.querySelector('input[placeholder="example@email.com"]');
+            const institutionInput = document.querySelector('input[placeholder="আপনার প্রতিষ্ঠানের নাম"]');
+            const passwordInput = document.querySelector('input[placeholder="••••••••"]');
+
+            registerForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = emailInput.value;
+                const password = passwordInput.value;
+                const fullName = fullNameInput.value;
+                const institution = institutionInput.value;
+
+                const { data, error } = await window.auth.signUp(email, password, {
+                    full_name: fullName,
+                    institution: institution
+                });
+
+                if (error) {
+                    alert('নিবন্ধন ব্যর্থ হয়েছে: ' + error.message);
+                } else {
+                    alert('নিবন্ধন সফল হয়েছে! অনুগ্রহ করে আপনার ইমেইল যাচাই করুন।');
+                    window.location.href = 'login.html';
+                }
+            });
+        });
+    </script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#10B981",
+                        secondary: "#FBBF24",
+                        "background-light": "#F9FAFB",
+                        "background-dark": "#111827",
+                    },
+                    fontFamily: {
+                        sans: ["'Hind Siliguri'", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                        'xl': '1rem',
+                        '2xl': '1.5rem',
+                        '3xl': '2rem',
+                    },
+                },
+            },
+        };
+    </script>
+    <style type="text/tailwindcss">
+        @layer base {
+            body {
+                @apply font-sans;
+            }
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #10B981 0%, #3B82F6 100%);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark min-h-screen flex items-center justify-center p-4">
+    <div
+        class="max-w-6xl w-full bg-white dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row min-h-[700px]">
+        <div class="md:w-5/12 gradient-bg p-12 text-white flex flex-col justify-between relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32"></div>
+            <div class="absolute bottom-0 left-0 w-48 h-48 bg-black/10 rounded-full -ml-24 -mb-24"></div>
+            <div class="relative z-10">
+                <div class="flex items-center gap-3 mb-12">
+                    <div
+                        class="w-10 h-10 bg-emerald-500 rounded-lg flex items-center justify-center shadow-lg shadow-emerald-900/20">
+                        <span class="material-symbols-outlined text-white text-2xl">psychology</span>
+                    </div>
+                    <span class="text-2xl font-bold tracking-tight">QuestionCraft <span
+                            class="text-emerald-300">BD</span></span>
+                </div>
+                <h1 class="text-4xl font-extrabold mb-6 leading-tight">শিক্ষার ভবিষ্যৎ এখন আপনার হাতে</h1>
+                <p class="text-emerald-50 text-lg mb-10 leading-relaxed">আজই যোগ দিন বাংলাদেশের সবচেয়ে আধুনিক AI-চালিত
+                    প্রশ্নপত্র তৈরির প্ল্যাটফর্মে।</p>
+                <div class="space-y-6">
+                    <div class="flex items-start gap-4 group">
+                        <div
+                            class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-white/30 transition-colors">
+                            <span class="material-symbols-outlined text-white">auto_awesome</span>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg">AI-চালিত প্রশ্ন তৈরি</h3>
+                            <p class="text-sm text-emerald-50/80">আধুনিক AI প্রযুক্তি ব্যবহার করে নিমেষেই তৈরি করুন
+                                নিখুঁত প্রশ্নপত্র।</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4 group">
+                        <div
+                            class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-white/30 transition-colors">
+                            <span class="material-symbols-outlined text-white">menu_book</span>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg">NCTB কারিকুলাম সাপোর্ট</h3>
+                            <p class="text-sm text-emerald-50/80">সম্পূর্ণরূপে বাংলাদেশের নতুন শিক্ষাক্রম অনুযায়ী সাজানো
+                                প্রশ্ন।</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4 group">
+                        <div
+                            class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-white/30 transition-colors">
+                            <span class="material-symbols-outlined text-white">bolt</span>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg">সময় সাশ্রয় করুন</h3>
+                            <p class="text-sm text-emerald-50/80">ঘন্টার কাজ হবে মিনিটে, শিক্ষকদের জন্য সহজ সমাধান।</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="relative z-10 mt-12 border-t border-white/20 pt-8">
+                <div class="flex -space-x-2 mb-4">
+                    <img alt="User" class="w-10 h-10 rounded-full border-2 border-primary"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCnVCsYNUlQtRCa_ATYsTzpSPz8YABFDM2uYZjKzz5sRAY62UxpdW0T9jGiPgLujdr5N1sJk4dFLNa-so2ASzplwleU1q5nGsxs5IQ_XLhLkAerI65B_ABaefYg4FBIhlP9j2hQEqyfsfTuv1-whsNw1nrmHOtlSxb8Tw5HVqnRAeBBVNhlzklZGiS7e3GbBPGELsFTDxzwnRs4WCiSVHuP4S9Mc_svNJQEvpa32TEz_cDL3NMvnuemLpfNUQNtEEqtJ301EzDhKVFn" />
+                    <img alt="User" class="w-10 h-10 rounded-full border-2 border-primary"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCdtJtiqmnXOWV7fEfGMK2sDvwlNQc1b9T5MEQGVapLNLRkiEHgZ6D4YN28K64BORo9dXC2jbkzEcUDmb-HHHdJQl-RdsxMtSOhRhoppXbB-jmTxyGNrKfcToAUKZ4OU6NFEENSRAQVL9psO9XcB8l5zRyHteqKL2LLBNwVxdzjdOBgMkcVN-CTTQxXINyCGBIUQMZo5XzFWWcLaTGNnk4fwMcRIhCsq6h6MnhAl9BdhidUXK4eIv-viOs-ezqizhuC732tCUEQ74nq" />
+                    <img alt="User" class="w-10 h-10 rounded-full border-2 border-primary"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBY8vDIChot9WNLgJmWgu_dkSaPCpNBlrOmqASwGSQZbnnbW3MVnTkPkXoMzRA2e7TcjKg7xf2ZJ07BYO71v0RHgio-xOMtPZGW94SdViEIkCpZnVgYqGYAGw-8h3E63_hCpb6Iw4oTSYmLFqA5j7VIff56NEz01LCKq8TWsZD8rp78dUH8C6NEDSaPwaDOtRv0icOiGaTpODiZD-aAvqCF8nPOiNQVXB7BkgTNym5D4WS39XMRYINPNXnSqkbby3grq-hSBTLWdrnu" />
+                    <div
+                        class="w-10 h-10 rounded-full border-2 border-primary bg-secondary flex items-center justify-center text-xs font-bold text-gray-900">
+                        +১০০</div>
+                </div>
+                <p class="text-xs text-emerald-50">৯০০০+ শিক্ষক ইতিমধ্যে আমাদের উপর আস্থা রেখেছেন</p>
+            </div>
+        </div>
+        <div class="md:w-7/12 p-8 md:p-16 flex flex-col justify-center">
+            <div class="flex justify-end gap-4 mb-6">
+                <button
+                    class="flex items-center gap-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-primary transition-colors">
+                    <span class="material-symbols-outlined text-lg">language</span>
+                    <span>English</span>
+                </button>
+                <button
+                    class="w-10 h-10 flex items-center justify-center rounded-full bg-slate-100 dark:bg-gray-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition-colors">
+                    <span class="material-symbols-outlined">dark_mode</span>
+                </button>
+            </div>
+            <div class="mb-10 text-center md:text-left">
+                <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">নতুন অ্যাকাউন্ট তৈরি করুন</h2>
+                <p class="text-slate-500 dark:text-slate-400">আপনার তথ্য দিয়ে রেজিস্ট্রেশন প্রক্রিয়া সম্পন্ন করুন।</p>
+            </div>
+            <form class="space-y-6">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">পুরো নাম</label>
+                    <div class="relative">
+                        <span
+                            class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">person</span>
+                        <input
+                            class="w-full pl-12 pr-4 py-3.5 bg-slate-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none text-gray-900 dark:text-white"
+                            placeholder="আপনার পূর্ণ নাম" type="text" />
+                    </div>
+                </div>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">ইমেইল
+                            ঠিকানা</label>
+                        <div class="relative">
+                            <span
+                                class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">mail</span>
+                            <input
+                                class="w-full pl-12 pr-4 py-3.5 bg-slate-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none text-gray-900 dark:text-white"
+                                placeholder="example@email.com" type="email" />
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">প্রতিষ্ঠানের
+                            নাম</label>
+                        <div class="relative">
+                            <span
+                                class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">school</span>
+                            <input
+                                class="w-full pl-12 pr-4 py-3.5 bg-slate-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none text-gray-900 dark:text-white"
+                                placeholder="আপনার প্রতিষ্ঠানের নাম" type="text" />
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">পাসওয়ার্ড</label>
+                    <div class="relative">
+                        <span
+                            class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">lock</span>
+                        <input
+                            class="w-full pl-12 pr-4 py-3.5 bg-slate-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none text-gray-900 dark:text-white"
+                            placeholder="••••••••" type="password" />
+                        <div class="mt-2 flex items-center gap-2">
+                            <div class="flex-1 h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                                <div class="h-full bg-orange-400 w-1/3 transition-all"></div>
+                            </div>
+                            <span class="text-[10px] font-bold text-orange-500 uppercase tracking-wider">মাঝারি</span>
+                        </div>
+                        <button class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                            type="button">
+                            <span class="material-symbols-outlined text-sm">visibility</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <input
+                        class="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary focus:ring-2"
+                        id="terms" type="checkbox" />
+                    <label class="ml-2 text-sm text-slate-500 dark:text-slate-400" for="terms">আমি <a
+                            class="text-primary font-semibold hover:underline" href="#">শর্তাবলী</a> ও <a
+                            class="text-primary font-semibold hover:underline" href="#">গোপনীয়তা নীতি</a> মেনে
+                        নিচ্ছি।</label>
+                </div>
+                <button
+                    class="w-full bg-primary hover:bg-emerald-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-emerald-500/30 transition-all flex items-center justify-center gap-2 text-lg active:scale-[0.98]"
+                    type="submit">
+                    <span class="material-symbols-outlined">person_add</span>
+                    নিবন্ধন সম্পন্ন করুন
+                </button>
+                <div class="flex items-center my-8">
+                    <div class="flex-grow border-t border-gray-100 dark:border-gray-700"></div>
+                    <span class="px-4 text-sm text-slate-400 font-medium">অথবা</span>
+                    <div class="flex-grow border-t border-gray-100 dark:border-gray-700"></div>
+                </div>
+                <div class="grid grid-cols-1 gap-4">
+                    <button
+                        class="flex items-center justify-center gap-3 py-3 border border-gray-200 dark:border-gray-700 rounded-xl hover:bg-slate-50 dark:hover:bg-gray-700 transition font-medium text-slate-700 dark:text-slate-200"
+                        type="button">
+                        <img alt="Google" class="w-5 h-5"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAKCzdKEF_kT0ueBisN9Ys9m6pBiTTRvilvHGwq_EnyiFrkVdwo3ZDCrqcgfMHX76xH-hceXRYA-F2xjQ-cQrG4co_1KnOMkYlcopsC_gRiJCl89eKWO2iiQkqGC9vi51I8PE2mg-U1SRQwxhUzWpSi6SsNQPP4mbYiP6a5owecoBHBChhpAJ37hPT9waHVHQFzmwV3tfYbglWXZjN4PclUvV3itcyiFHQbzr_ZgieVveHjsyHH5UrWwwcl0WsjHrulKy2j0UBu5Tg" />
+                        গুগল দিয়ে সাইন আপ করুন
+                    </button>
+                </div>
+                <p class="text-center mt-8 text-slate-600 dark:text-slate-400">
+                    ইতিমধ্যেই একাউন্ট আছে? <a class="text-primary hover:text-accent font-bold" href="login.html">লগইন
+                        করুন</a>
+                </p>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>

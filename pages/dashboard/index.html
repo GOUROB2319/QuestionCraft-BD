@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>QuestionCraft-BD | Educator Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../js/config.js"></script>
+    <script src="../../js/supabase-client.js"></script>
+    <script src="../../js/auth.js"></script>
+    <script src="../../js/gemini-service.js"></script>
+    <link href="../../css/global.css" rel="stylesheet" />
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const session = await window.auth.checkSession();
+            if (!session) {
+                window.location.href = '../../login.html';
+                return;
+            }
+
+            // Update dashboard with user info
+            const user = session.user;
+            const userNameEl = document.querySelector('.text-primary.font-semibold');
+            if (userNameEl) userNameEl.textContent = user.user_metadata.full_name || user.email;
+
+            const logoutBtn = Array.from(document.querySelectorAll('a')).find(el => el.textContent.includes('Logout') || el.textContent.includes('লগআউট'));
+            if (logoutBtn) {
+                logoutBtn.onclick = (e) => {
+                    e.preventDefault();
+                    window.auth.signOut();
+                };
+            }
+
+            const createBtn = document.querySelector('button:contains("Create New Paper")') ||
+                Array.from(document.querySelectorAll('button')).find(b => b.textContent.includes('Create New Paper'));
+            if (createBtn) {
+                createBtn.onclick = () => window.location.href = '../editor/index.html';
+            }
+        });
+    </script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1f3b61",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#14181e",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Lexend', sans-serif;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .active-nav {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-left: 4px solid white;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+</head>
+
+<body class="bg-background-light dark:bg-background-dark text-slate-900 font-display font-['Hind_Siliguri']">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar Navigation -->
+        <aside class="w-64 bg-primary text-white flex flex-col shrink-0 transition-all duration-300">
+            <div class="p-6 flex items-center gap-3">
+                <div class="flex items-center gap-3">
+                    <div class="size-10 bg-[#10B981] rounded-lg flex items-center justify-center text-white">
+                        <span class="material-symbols-outlined text-2xl">psychology</span>
+                    </div>
+                    <div class="flex items-baseline gap-1">
+                        <h1 class="font-bold text-lg leading-tight text-white">QuestionCraft</h1>
+                        <span class="text-[#10B981] font-bold text-sm">BD</span>
+                    </div>
+                </div>
+            </div>
+            <nav class="flex-1 mt-6 px-3 space-y-1">
+                <a class="flex items-center gap-3 px-4 py-3 rounded-lg active-nav bg-white/10" href="#">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    <span class="font-medium">Dashboard</span>
+                </a>
+                <a class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-colors" href="#">
+                    <span class="material-symbols-outlined">description</span>
+                    <span class="font-medium text-white/80">My Questions</span>
+                </a>
+                <a class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-colors" href="#">
+                    <span class="material-symbols-outlined">account_balance</span>
+                    <span class="font-medium text-white/80">Question Bank</span>
+                </a>
+                <div class="pt-4 pb-2 px-4">
+                    <p class="text-[10px] uppercase tracking-widest text-white/40 font-bold">Preferences</p>
+                </div>
+                <a class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-colors" href="#">
+                    <span class="material-symbols-outlined">settings</span>
+                    <span class="font-medium text-white/80">Settings</span>
+                </a>
+                <a class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-colors" href="#">
+                    <span class="material-symbols-outlined">help</span>
+                    <span class="font-medium text-white/80">Support</span>
+                </a>
+            </nav>
+            <div class="p-4 mt-auto border-t border-white/10">
+                <div class="bg-white/5 rounded-xl p-4">
+                    <p class="text-xs text-white/60 mb-2">Storage Usage</p>
+                    <div class="w-full bg-white/10 h-1.5 rounded-full overflow-hidden">
+                        <div class="bg-blue-400 h-full w-[65%]"></div>
+                    </div>
+                    <p class="text-[10px] mt-2 text-white/40">650MB of 1GB used</p>
+                </div>
+            </div>
+        </aside>
+        <!-- Main Content Area -->
+        <main class="flex-1 flex flex-col min-w-0 overflow-hidden">
+            <!-- Top Header Bar -->
+            <header class="h-16 bg-white border-b border-primary/10 flex items-center justify-between px-8 shrink-0">
+                <div class="flex items-center flex-1 max-w-xl">
+                    <div class="relative w-full group">
+                        <span
+                            class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-primary/40 group-focus-within:text-primary transition-colors">search</span>
+                        <input
+                            class="w-full pl-10 pr-4 py-2 bg-background-light border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm transition-all"
+                            placeholder="প্রশ্ন বা প্রশ্নপত্র খুঁজুন..." type="text" />
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 ml-4">
+                    <button
+                        class="relative p-2 text-primary/60 hover:text-primary hover:bg-primary/5 rounded-full transition-all">
+                        <span class="material-symbols-outlined">notifications</span>
+                        <span
+                            class="absolute top-2 right-2 size-2 bg-red-500 rounded-full border-2 border-white"></span>
+                    </button>
+                    <button
+                        class="p-2 text-primary/60 hover:text-primary hover:bg-primary/5 rounded-full transition-all">
+                        <span class="material-symbols-outlined">chat_bubble</span>
+                    </button>
+                    <div class="h-8 w-[1px] bg-primary/10 mx-2"></div>
+                    <div class="flex items-center gap-2 mr-2">
+                        <button
+                            class="px-2 py-1 text-xs font-bold border border-primary/10 rounded hover:bg-primary/5 text-primary/60">BN</button>
+                        <button class="p-2 text-primary/60 hover:text-primary hover:bg-primary/5 rounded-full">
+                            <span class="material-symbols-outlined text-[20px]">dark_mode</span>
+                        </button>
+                    </div>
+                    <div class="flex items-center gap-3 cursor-pointer group">
+                        <div class="text-right hidden sm:block">
+                            <p class="text-sm font-semibold text-primary">Dr. Sarah Ahmed</p>
+                            <p class="text-[10px] text-primary/60">Senior Lecturer</p>
+                        </div>
+                        <div class="size-10 rounded-full bg-primary/10 border-2 border-primary/20 overflow-hidden transition-transform group-hover:scale-105 bg-cover bg-center"
+                            data-alt="Female educator profile headshot"
+                            style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCeRO07mrx_IAz5j7LCTmguoaLGwSrFrnEHlGjnFzSnlHg8LMmvBooei_HBppzMvPQZt1pyIgmMk3d51ux8f7uKaZm_oPN7Qr2NoZvl0SZ_OpLxUftzJg3DkSH4hzf1G67z8A7LbEl1hiEDIEQMvAs7ZCdcz10VD-_CT5UxWynoXC_wUByOuM2_1Vr2COf4ni1U1dX-RiQdeBYmSafUO15fGrdEhLTdePRMpyqqNFnwfeo0BKwdSFMYv5C9dKJfFBNzpZq7P3Kz6KGG')">
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <!-- Dashboard Body -->
+            <div class="flex-1 overflow-y-auto p-8 space-y-8">
+                <!-- Welcome Section -->
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-primary">Overview Dashboard</h2>
+                        <p class="text-primary/60 text-sm">Welcome back, here's what's happening with your questions.
+                        </p>
+                    </div>
+                    <button
+                        class="bg-primary text-white px-6 py-2.5 rounded-lg font-semibold text-sm flex items-center gap-2 hover:bg-primary/90 transition-all shadow-lg shadow-primary/20">
+                        <span class="material-symbols-outlined text-[20px]">add</span>
+                        Create New Paper
+                    </button>
+                </div>
+                <!-- Statistics Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div
+                        class="bg-white p-6 border border-primary/5 shadow-sm hover:shadow-md transition-shadow rounded-3xl">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="p-2 bg-[#10B981]/10 rounded-lg text-[#10B981]">
+                                <span class="material-symbols-outlined">auto_stories</span>
+                            </div>
+                            <span
+                                class="text-[#10B981] text-xs font-bold bg-[#10B981]/10 px-2 py-1 rounded-full flex items-center gap-1">
+                                <span class="material-symbols-outlined text-[14px]">trending_up</span> +12%
+                            </span>
+                        </div>
+                        <p class="text-primary/60 text-sm font-semibold uppercase tracking-wider">Total Papers</p>
+                        <h3 class="text-4xl font-bold text-primary mt-1">128</h3>
+                    </div>
+                    <div
+                        class="bg-white p-6 border border-primary/5 shadow-sm hover:shadow-md transition-shadow rounded-3xl">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="p-2 bg-amber-50 rounded-lg text-amber-600">
+                                <span class="material-symbols-outlined">edit_note</span>
+                            </div>
+                            <span
+                                class="text-amber-600 text-xs font-bold bg-amber-50 px-2 py-1 rounded-full flex items-center gap-1">
+                                <span class="material-symbols-outlined text-[14px]">history</span> 5 pending
+                            </span>
+                        </div>
+                        <p class="text-primary/60 text-sm font-semibold uppercase tracking-wider">Drafts</p>
+                        <h3 class="text-4xl font-bold text-primary mt-1">14</h3>
+                    </div>
+                    <div
+                        class="bg-white p-6 border border-primary/5 shadow-sm hover:shadow-md transition-shadow rounded-3xl">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="p-2 bg-blue-50 rounded-lg text-blue-600">
+                                <span class="material-symbols-outlined">share_reviews</span>
+                            </div>
+                            <span
+                                class="text-blue-600 text-xs font-bold bg-blue-50 px-2 py-1 rounded-full flex items-center gap-1">
+                                <span class="material-symbols-outlined text-[14px]">public</span> +8%
+                            </span>
+                        </div>
+                        <p class="text-primary/60 text-sm font-semibold uppercase tracking-wider">Shared Papers</p>
+                        <h3 class="text-4xl font-bold text-primary mt-1">45</h3>
+                    </div>
+                </div>
+                <!-- Recent Question Papers Table -->
+                <div class="bg-white rounded-xl border border-primary/5 shadow-sm overflow-hidden">
+                    <div class="p-6 border-b border-primary/5 flex items-center justify-between">
+                        <h4 class="font-bold text-primary">Recent Question Papers</h4>
+                        <div class="flex gap-2">
+                            <button
+                                class="p-2 border border-primary/10 rounded-lg text-primary/60 hover:bg-primary/5 transition-all">
+                                <span class="material-symbols-outlined text-[20px]">filter_list</span>
+                            </button>
+                            <button
+                                class="p-2 border border-primary/10 rounded-lg text-primary/60 hover:bg-primary/5 transition-all">
+                                <span class="material-symbols-outlined text-[20px]">download</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead>
+                                <tr
+                                    class="bg-background-light/50 text-primary/60 text-[12px] uppercase tracking-wider font-bold">
+                                    <th class="px-6 py-4">Title</th>
+                                    <th class="px-6 py-4">Subject</th>
+                                    <th class="px-6 py-4">Class</th>
+                                    <th class="px-6 py-4">Date Created</th>
+                                    <th class="px-6 py-4">Status</th>
+                                    <th class="px-6 py-4 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-primary/5">
+                                <tr class="hover:bg-primary/5 transition-colors group">
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="size-8 rounded bg-primary/10 text-primary flex items-center justify-center font-bold text-xs">
+                                                P</div>
+                                            <span class="text-sm font-semibold text-primary">Midterm Physics 101</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-primary/80">Science</td>
+                                    <td class="px-6 py-4 text-sm text-primary/80">Class 10</td>
+                                    <td class="px-6 py-4 text-sm text-primary/60 italic font-light">Oct 24, 2023</td>
+                                    <td class="px-6 py-4">
+                                        <span
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                                            Published
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <div
+                                            class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <button
+                                                class="p-1.5 text-primary/60 hover:text-primary hover:bg-primary/10 rounded transition-all"
+                                                title="Edit">
+                                                <span class="material-symbols-outlined text-[18px]">edit</span>
+                                            </button>
+                                            <button
+                                                class="p-1.5 text-primary/60 hover:text-primary hover:bg-primary/10 rounded transition-all"
+                                                title="Download">
+                                                <span class="material-symbols-outlined text-[18px]">download</span>
+                                            </button>
+                                            <button
+                                                class="p-1.5 text-primary/60 hover:text-primary hover:bg-primary/10 rounded transition-all"
+                                                title="Preview">
+                                                <span class="material-symbols-outlined text-[18px]">visibility</span>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-primary/5 transition-colors group">
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="size-8 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs">
+                                                M</div>
+                                            <span class="text-sm font-semibold text-primary">Calculus Basics</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-primary/80">Math</td>
+                                    <td class="px-6 py-4 text-sm text-primary/80">Class 12</td>
+                                    <td class="px-6 py-4 text-sm text-primary/60 italic font-light">Oct 22, 2023</td>
+                                    <td class="px-6 py-4">
+                                        <span
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                                            Draft
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <div
+                                            class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <button
+                                                class="p-1.5 text-primary/60 hover:text-primary hover:bg-primary/10 rounded transition-all"
+                                                title="Edit">
+                                                <span class="material-symbols-outlined text-[18px]">edit</span>
+                                            </button>
+                                            <button
+                                                class="p-1.5 text-primary/60 hover:text-primary hover:bg-primary/10 rounded transition-all"
+                                                title="Download">
+                                                <span class="material-symbols-outlined text-[18px]">download</span>
+                                            </button>
+                                            <button
+                                                class="p-1.5 text-primary/60 hover:text-primary hover:bg-primary/10 rounded transition-all"
+                                                title="Preview">
+                                                <span class="material-symbols-outlined text-[18px]">visibility</span>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-primary/5 transition-colors group">
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="size-8 rounded bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-xs">
+                                                E</div>
+                                            <span class="text-sm font-semibold text-primary">English Grammar</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-primary/80">Humanities</td>
+                                    <td class="px-6 py-4 text-sm text-primary/80">Class 9</td>
+                                    <td class="px-6 py-4 text-sm text-primary/60 italic font-light">Oct 20, 2023</td>
+                                    <td class="px-6 py-4">
+                                        <span
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                                            Published
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <div
+                                            class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <button
+                                                class="p-1.5 text-primary/60 hover:text-primary hover:bg-primary/10 rounded transition-all"
+                                                title="Edit">
+                                                <span class="material-symbols-outlined text-[18px]">edit</span>
+                                            </button>
+                                            <button
+                                                class="p-1.5 text-primary/60 hover:text-primary hover:bg-primary/10 rounded transition-all"
+                                                title="Download">
+                                                <span class="material-symbols-outlined text-[18px]">download</span>
+                                            </button>
+                                            <button
+                                                class="p-1.5 text-primary/60 hover:text-primary hover:bg-primary/10 rounded transition-all"
+                                                title="Preview">
+                                                <span class="material-symbols-outlined text-[18px]">visibility</span>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-primary/5 transition-colors group border-b-0">
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="size-8 rounded bg-purple-100 text-purple-600 flex items-center justify-center font-bold text-xs">
+                                                C</div>
+                                            <span class="text-sm font-semibold text-primary">Organic Chemistry</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-primary/80">Science</td>
+                                    <td class="px-6 py-4 text-sm text-primary/80">Class 11</td>
+                                    <td class="px-6 py-4 text-sm text-primary/60 italic font-light">Oct 18, 2023</td>
+                                    <td class="px-6 py-4">
+                                        <span
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                                            Draft
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <div
+                                            class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <button
+                                                class="p-1.5 text-primary/60 hover:text-primary hover:bg-primary/10 rounded transition-all"
+                                                title="Edit">
+                                                <span class="material-symbols-outlined text-[18px]">edit</span>
+                                            </button>
+                                            <button
+                                                class="p-1.5 text-primary/60 hover:text-primary hover:bg-primary/10 rounded transition-all"
+                                                title="Download">
+                                                <span class="material-symbols-outlined text-[18px]">download</span>
+                                            </button>
+                                            <button
+                                                class="p-1.5 text-primary/60 hover:text-primary hover:bg-primary/10 rounded transition-all"
+                                                title="Preview">
+                                                <span class="material-symbols-outlined text-[18px]">visibility</span>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div
+                        class="p-6 bg-background-light/30 border-t border-primary/5 flex items-center justify-between text-xs text-primary/60">
+                        <p>Showing 4 of 128 items</p>
+                        <div class="flex items-center gap-2">
+                            <button
+                                class="size-8 rounded border border-primary/10 flex items-center justify-center hover:bg-primary hover:text-white transition-all">
+                                <span class="material-symbols-outlined text-[16px]">chevron_left</span>
+                            </button>
+                            <button
+                                class="size-8 rounded bg-primary text-white flex items-center justify-center font-bold">1</button>
+                            <button
+                                class="size-8 rounded border border-primary/10 flex items-center justify-center hover:bg-primary hover:text-white transition-all font-bold">2</button>
+                            <button
+                                class="size-8 rounded border border-primary/10 flex items-center justify-center hover:bg-primary hover:text-white transition-all font-bold">3</button>
+                            <button
+                                class="size-8 rounded border border-primary/10 flex items-center justify-center hover:bg-primary hover:text-white transition-all">
+                                <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Footer Quick Actions / Tips -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-primary/5 rounded-xl p-6 border border-primary/10 flex gap-4 items-start">
+                        <div class="p-3 bg-primary text-white rounded-lg">
+                            <span class="material-symbols-outlined">lightbulb</span>
+                        </div>
+                        <div>
+                            <h5 class="font-bold text-primary mb-1">Teacher's Tip</h5>
+                            <p class="text-sm text-primary/70 leading-relaxed">Try the "Automatic Question Generation"
+                                tool to save up to 40% of your time on routine quizzes.</p>
+                            <a class="inline-block mt-3 text-primary font-bold text-xs hover:underline uppercase tracking-wider"
+                                href="#">Learn More</a>
+                        </div>
+                    </div>
+                    <div class="bg-primary/5 rounded-xl p-6 border border-primary/10 flex gap-4 items-start">
+                        <div class="p-3 bg-white text-primary rounded-lg border border-primary/20">
+                            <span class="material-symbols-outlined">groups</span>
+                        </div>
+                        <div>
+                            <h5 class="font-bold text-primary mb-1">Collaboration</h5>
+                            <p class="text-sm text-primary/70 leading-relaxed">You have 3 new pending invitations to
+                                collaborate on the "Annual Physics Final" paper.</p>
+                            <a class="inline-block mt-3 text-primary font-bold text-xs hover:underline uppercase tracking-wider"
+                                href="#">Review Invites</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>

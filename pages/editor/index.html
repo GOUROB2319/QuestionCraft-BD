@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Question Editor - QuestionCraft BD</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../js/config.js"></script>
+    <script src="../../js/supabase-client.js"></script>
+    <script src="../../js/auth.js"></script>
+    <script src="../../js/gemini-service.js"></script>
+    <link href="../../css/global.css" rel="stylesheet" />
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const session = await window.auth.checkSession();
+            if (!session) {
+                window.location.href = '../../login.html';
+                return;
+            }
+
+            // Helper to find button by text
+            const findButtonByText = (text) => Array.from(document.querySelectorAll('button')).find(b => b.textContent.trim().includes(text));
+
+            // AI Suggest Logic
+            const aiSuggestBtns = Array.from(document.querySelectorAll('button')).filter(b => b.textContent.includes('AI Suggest Options'));
+
+            aiSuggestBtns.forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const questionBlock = btn.closest('.group');
+                    const textarea = questionBlock.querySelector('textarea');
+                    const questionText = textarea ? textarea.value : '';
+
+                    if (!questionText) {
+                        alert('দয়া করে আগে একটি প্রশ্ন লিখুন।');
+                        return;
+                    }
+
+                    console.log('Generating options for:', questionText);
+                    btn.innerHTML = '<span class="material-symbols-outlined text-sm animate-spin">sync</span><span>Generating...</span>';
+                    btn.disabled = true;
+
+                    try {
+                        const result = await window.geminiService.generateQuestions({
+                            subject: 'Physics',
+                            class: '10',
+                            chapter: 'Chapter 1',
+                            topic: questionText,
+                            type: 'MCQ',
+                            count: 1,
+                            difficulty: 'Medium'
+                        });
+
+                        if (result.questions && result.questions.length > 0) {
+                            const question = result.questions[0];
+                            const inputs = questionBlock.querySelectorAll('input[type="text"]');
+                            if (question.options) {
+                                question.options.forEach((opt, idx) => {
+                                    if (inputs[idx]) inputs[idx].value = opt;
+                                });
+                            }
+                            alert('বিকল্পগুলো সফলভাবে যোগ করা হয়েছে!');
+                        }
+                    } catch (err) {
+                        console.error('AI Suggest Error:', err);
+                        alert('Error: ' + err.message);
+                    } finally {
+                        btn.innerHTML = '<span class="material-symbols-outlined text-sm">magic_button</span><span>AI Suggest Options</span>';
+                        btn.disabled = false;
+                    }
+                });
+            });
+
+            // Generate with AI Logic
+            const aiGenerateBtn = document.getElementById('ai-generate-btn');
+            if (aiGenerateBtn) {
+                aiGenerateBtn.onclick = async () => {
+                    const topic = prompt('প্রশন তৈরির বিষয় বা টপিক লিখুন:');
+                    if (!topic) return;
+
+                    console.log('Generating question for topic:', topic);
+                    aiGenerateBtn.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span><span>Generating...</span>';
+                    aiGenerateBtn.disabled = true;
+
+                    try {
+                        const result = await window.geminiService.generateQuestions({
+                            subject: 'Physics',
+                            class: '10',
+                            chapter: 'General',
+                            topic: topic,
+                            type: 'MCQ',
+                            count: 1,
+                            difficulty: 'Medium'
+                        });
+
+                        if (result.questions && result.questions.length > 0) {
+                            const q = result.questions[0];
+                            alert('AI সফলভাবে প্রশ্ন তৈরি করেছে: ' + q.questionText);
+
+                            // Append to the list (very basic implementation for verification)
+                            const container = document.querySelector('.space-y-6');
+                            const newBlock = document.createElement('div');
+                            newBlock.className = 'group relative rounded-xl border border-transparent bg-white dark:bg-white/5 p-6 shadow-sm transition-all hover:border-primary/30 hover:shadow-md';
+                            newBlock.innerHTML = `
+                            <div class="mb-4 flex items-center justify-between">
+                                <span class="rounded bg-primary/10 px-2.5 py-1 text-xs font-bold text-primary">NEW QUESTION</span>
+                            </div>
+                            <div class="font-bengali text-lg leading-relaxed text-[#0f1a16] dark:text-gray-200">
+                                <textarea class="w-full border-none bg-transparent p-0 font-bengali text-lg leading-relaxed focus:ring-0">${q.questionText}</textarea>
+                            </div>
+                            <div class="mt-4 grid grid-cols-2 gap-3">
+                                ${q.options.map((opt, i) => `
+                                    <div class="flex items-center gap-3 rounded-lg border border-[#e8f2ef] dark:border-white/5 p-3">
+                                        <div class="flex size-6 items-center justify-center rounded-full bg-gray-100 text-[10px] font-bold text-gray-400">${String.fromCharCode(65 + i)}</div>
+                                        <input class="w-full border-none bg-transparent p-0 font-bengali text-sm focus:ring-0 text-[#0f1a16]" type="text" value="${opt}"/>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+                            container.insertBefore(newBlock, document.querySelector('.flex.flex-col.md\\:flex-row.gap-4'));
+                        }
+                    } catch (err) {
+                        console.error('AI Generate Error:', err);
+                        alert('Error: ' + err.message);
+                    } finally {
+                        aiGenerateBtn.innerHTML = '<span class="material-symbols-outlined">auto_fix_high</span><span>Generate with AI</span>';
+                        aiGenerateBtn.disabled = false;
+                    }
+                };
+            }
+        });
+    </script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1fad7e",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#12201b",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"],
+                        "bengali": ["Hind Siliguri", "serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <style>
+        .paper-shadow {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+        }
+
+        .dark .glass-panel {
+            background: rgba(18, 32, 27, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #2d3748;
+        }
+
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            opacity: 0.03;
+            font-size: 8rem;
+            pointer-events: none;
+            white-space: nowrap;
+            font-weight: 800;
+        }
+    </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark font-display text-[#0f1a16] transition-colors duration-300">
+    <div class="flex h-screen w-full flex-col overflow-hidden">
+        <!-- Header -->
+        <header
+            class="flex h-16 items-center justify-between border-b border-[#e8f2ef] dark:border-white/10 bg-white/80 dark:bg-background-dark/80 px-6 backdrop-blur-md z-20">
+            <div class="flex items-center gap-8">
+                <div class="flex items-center gap-2">
+                    <div class="bg-[#10B981] p-1.5 rounded-lg text-white">
+                        <span class="material-symbols-outlined text-2xl block">edit_note</span>
+                    </div>
+                    <h1 class="text-xl font-bold tracking-tight text-[#0f1a16] dark:text-white">QuestionCraft <span
+                            class="text-[#10B981]">BD</span></h1>
+                </div>
+                <nav class="hidden lg:flex items-center gap-3 text-sm font-medium text-gray-500">
+                    <a class="hover:text-[#10B981] transition-colors" href="#">Dashboard</a>
+                    <span class="material-symbols-outlined text-base">chevron_right</span>
+                    <a class="hover:text-[#10B981] transition-colors" href="#">My Questions</a>
+                    <span class="material-symbols-outlined text-base">chevron_right</span>
+                    <span class="text-[#0f1a16] dark:text-white">Create New</span>
+                </nav>
+            </div>
+            <div class="flex items-center gap-3">
+                <button
+                    class="flex items-center gap-2 rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 px-4 py-2 text-sm font-semibold text-[#0f1a16] dark:text-white hover:bg-gray-50 transition-all">
+                    <span class="material-symbols-outlined text-lg">save</span>
+                    <span>Save Draft</span>
+                </button>
+                <button
+                    class="flex items-center gap-2 rounded-lg bg-[#10B981] px-5 py-2 text-sm font-bold text-white shadow-lg shadow-[#10B981]/20 hover:bg-[#10B981]/90 transition-all">
+                    <span class="material-symbols-outlined text-lg">picture_as_pdf</span>
+                    <span>Generate PDF</span>
+                </button>
+            </div>
+        </header>
+        <div class="flex flex-1 overflow-hidden">
+            <!-- Vertical Toolbar -->
+            <aside
+                class="flex w-16 flex-col items-center gap-4 border-r border-[#e8f2ef] dark:border-white/10 bg-white dark:bg-background-dark py-4 z-10">
+                <button
+                    class="flex size-10 items-center justify-center rounded-lg text-[#53937d] hover:bg-primary/10 hover:text-primary transition-all"
+                    title="Mathematical Formulas">
+                    <span class="material-symbols-outlined">functions</span>
+                </button>
+                <button
+                    class="flex size-10 items-center justify-center rounded-lg text-[#53937d] hover:bg-primary/10 hover:text-primary transition-all"
+                    title="Upload Diagram">
+                    <span class="material-symbols-outlined">image</span>
+                </button>
+                <button
+                    class="flex size-10 items-center justify-center rounded-lg text-[#53937d] hover:bg-primary/10 hover:text-primary transition-all"
+                    title="Chart/Graph">
+                    <span class="material-symbols-outlined">leaderboard</span>
+                </button>
+                <button
+                    class="flex size-10 items-center justify-center rounded-lg text-[#53937d] hover:bg-primary/10 hover:text-primary transition-all"
+                    title="Syllabus Topics">
+                    <span class="material-symbols-outlined">account_tree</span>
+                </button>
+                <div class="my-2 h-px w-8 bg-[#e8f2ef] dark:bg-white/10"></div>
+                <button
+                    class="flex size-10 items-center justify-center rounded-lg text-[#53937d] hover:bg-primary/10 hover:text-primary transition-all"
+                    title="Undo">
+                    <span class="material-symbols-outlined">undo</span>
+                </button>
+                <button
+                    class="flex size-10 items-center justify-center rounded-lg text-[#53937d] hover:bg-primary/10 hover:text-primary transition-all"
+                    title="Redo">
+                    <span class="material-symbols-outlined">redo</span>
+                </button>
+            </aside>
+            <!-- Main Workspace: Split Pane -->
+            <main class="flex flex-1 overflow-hidden">
+                <!-- Editor Pane (Left) -->
+                <section
+                    class="flex flex-1 flex-col overflow-y-auto bg-background-light dark:bg-background-dark custom-scrollbar">
+                    <div class="mx-auto w-full max-w-4xl p-8">
+                        <!-- Page Heading Component -->
+                        <div class="mb-8 flex flex-col gap-2">
+                            <h2 class="text-3xl font-bold tracking-tight text-[#0f1a16] dark:text-white">Question Editor
+                            </h2>
+                            <p class="text-[#53937d] dark:text-[#53937d]/80">Create and structure your exam questions.
+                                Use the right pane for real-time preview.</p>
+                        </div>
+                        <!-- Segmented Buttons Component -->
+                        <div class="mb-8 inline-flex w-full rounded-lg bg-gray-100 dark:bg-white/5 p-1">
+                            <button
+                                class="flex-1 rounded-md bg-[#10B981] px-4 py-2 text-sm font-bold text-white shadow-sm">MCQ</button>
+                            <button
+                                class="flex-1 rounded-md px-4 py-2 text-sm font-medium text-gray-500 hover:text-[#0f1a16] dark:hover:text-white transition-colors">Creative</button>
+                            <button
+                                class="flex-1 rounded-md px-4 py-2 text-sm font-medium text-gray-500 hover:text-[#0f1a16] dark:hover:text-white transition-colors">Short
+                                Questions</button>
+                        </div>
+                        <!-- Question Blocks -->
+                        <div class="space-y-6">
+                            <!-- Question Block 1 -->
+                            <div
+                                class="group relative rounded-xl border border-transparent bg-white dark:bg-white/5 p-6 shadow-sm transition-all hover:border-primary/30 hover:shadow-md">
+                                <div class="mb-4 flex items-center justify-between">
+                                    <span class="rounded bg-primary/10 px-2.5 py-1 text-xs font-bold text-primary"
+                                        style="background-color: rgba(16, 185, 129, 0.1); color: #10B981;">QUESTION
+                                        01</span>
+                                    <div class="flex items-center gap-2">
+                                        <div
+                                            class="flex items-center gap-1 rounded-lg bg-gray-100 dark:bg-white/5 px-2 py-1">
+                                            <span class="text-[10px] font-bold text-gray-500 uppercase">Marks</span>
+                                            <input
+                                                class="w-8 border-none bg-transparent p-0 text-center text-sm font-bold focus:ring-0 text-[#0f1a16] dark:text-white"
+                                                type="number" value="1" />
+                                        </div>
+                                        <select
+                                            class="rounded-lg border-none bg-gray-100 dark:bg-white/5 py-1 pl-3 pr-8 text-xs font-bold text-gray-600 dark:text-gray-400 focus:ring-0">
+                                            <option>Easy</option>
+                                            <option selected="">Medium</option>
+                                            <option>Hard</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="font-bengali text-lg leading-relaxed text-[#0f1a16] dark:text-gray-200">
+                                    <textarea
+                                        class="w-full border-none bg-transparent p-0 font-bengali text-lg leading-relaxed focus:ring-0 placeholder:text-gray-300"
+                                        placeholder="Type your question here..."
+                                        rows="2">নিচের কোনটি ভেক্টরের গুণনের ক্ষেত্রে প্রযোজ্য নয়?</textarea>
+                                </div>
+                                <div class="mt-4 grid grid-cols-2 gap-3">
+                                    <div
+                                        class="flex items-center gap-3 rounded-lg border border-[#e8f2ef] dark:border-white/5 p-3 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                                        <div
+                                            class="flex size-6 items-center justify-center rounded-full bg-primary/10 text-[10px] font-bold text-primary">
+                                            A</div>
+                                        <input
+                                            class="w-full border-none bg-transparent p-0 font-bengali text-sm focus:ring-0 text-[#0f1a16] dark:text-white"
+                                            type="text" value="বিনিময় সূত্র" />
+                                    </div>
+                                    <div
+                                        class="flex items-center gap-3 rounded-lg border border-[#e8f2ef] dark:border-white/5 p-3 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                                        <div
+                                            class="flex size-6 items-center justify-center rounded-full bg-gray-100 dark:bg-white/10 text-[10px] font-bold text-gray-400">
+                                            B</div>
+                                        <input
+                                            class="w-full border-none bg-transparent p-0 font-bengali text-sm focus:ring-0 text-[#0f1a16] dark:text-white"
+                                            type="text" value="বন্টন সূত্র" />
+                                    </div>
+                                    <div class="flex items-center gap-3 rounded-lg border border-primary/40 bg-primary/5 p-3"
+                                        style="border-color: rgba(16, 185, 129, 0.4); background-color: rgba(16, 185, 129, 0.05);">
+                                        <div class="flex size-6 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white"
+                                            style="background-color: #10B981;">C</div>
+                                        <input
+                                            class="w-full border-none bg-transparent p-0 font-bengali text-sm focus:ring-0 text-[#0f1a16] dark:text-white"
+                                            type="text" value="সংযোগ সূত্র" />
+                                        <span class="material-symbols-outlined text-primary text-sm"
+                                            style="color: #10B981;">check_circle</span>
+                                    </div>
+                                    <div
+                                        class="flex items-center gap-3 rounded-lg border border-[#e8f2ef] dark:border-white/5 p-3 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                                        <div
+                                            class="flex size-6 items-center justify-center rounded-full bg-gray-100 dark:bg-white/10 text-[10px] font-bold text-gray-400">
+                                            D</div>
+                                        <input
+                                            class="w-full border-none bg-transparent p-0 font-bengali text-sm focus:ring-0 text-[#0f1a16] dark:text-white"
+                                            type="text" value="ধ্রুবক গুণন" />
+                                    </div>
+                                </div>
+                                <!-- AI Assist Buttons (Floating on hover) -->
+                                <div
+                                    class="absolute -right-4 top-1/2 flex -translate-y-1/2 flex-col gap-2 opacity-0 transition-opacity group-hover:opacity-100">
+                                    <button
+                                        class="flex size-9 items-center justify-center rounded-full bg-white dark:bg-gray-800 shadow-lg text-primary hover:scale-110 transition-transform"
+                                        style="color: #10B981;">
+                                        <span class="material-symbols-outlined text-lg">auto_fix_high</span>
+                                    </button>
+                                    <button
+                                        class="flex size-9 items-center justify-center rounded-full bg-white dark:bg-gray-800 shadow-lg text-blue-500 hover:scale-110 transition-transform">
+                                        <span class="material-symbols-outlined text-lg">psychology</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Question Block 2 -->
+                            <div
+                                class="group relative rounded-xl border border-transparent bg-white dark:bg-white/5 p-6 shadow-sm transition-all hover:border-primary/30 hover:shadow-md">
+                                <div class="mb-4 flex items-center justify-between">
+                                    <span class="rounded bg-primary/10 px-2.5 py-1 text-xs font-bold text-primary"
+                                        style="background-color: rgba(16, 185, 129, 0.1); color: #10B981;">QUESTION
+                                        02</span>
+                                    <div class="flex items-center gap-2">
+                                        <div
+                                            class="flex items-center gap-1 rounded-lg bg-gray-100 dark:bg-white/5 px-2 py-1">
+                                            <span class="text-[10px] font-bold text-gray-500 uppercase">Marks</span>
+                                            <input
+                                                class="w-8 border-none bg-transparent p-0 text-center text-sm font-bold focus:ring-0 text-[#0f1a16] dark:text-white"
+                                                type="number" value="1" />
+                                        </div>
+                                        <select
+                                            class="rounded-lg border-none bg-gray-100 dark:bg-white/5 py-1 pl-3 pr-8 text-xs font-bold text-gray-600 dark:text-gray-400 focus:ring-0">
+                                            <option selected="">Easy</option>
+                                            <option>Medium</option>
+                                            <option>Hard</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="font-bengali text-lg leading-relaxed text-[#0f1a16] dark:text-gray-200">
+                                    <textarea
+                                        class="w-full border-none bg-transparent p-0 font-bengali text-lg leading-relaxed focus:ring-0 placeholder:text-gray-300"
+                                        placeholder="Type your question here..."
+                                        rows="2">পৃথিবীর কেন্দ্রস্থলে অভিকর্ষজ ত্বরণের মান কত?</textarea>
+                                </div>
+                                <div class="mt-4 flex flex-wrap gap-4">
+                                    <button
+                                        class="flex items-center gap-2 rounded-lg border-2 border-dashed border-gray-200 dark:border-white/10 px-6 py-4 text-sm font-medium text-gray-400 hover:border-[#10B981]/40 hover:text-[#10B981] transition-all">
+                                        <span class="material-symbols-outlined">add_circle</span>
+                                        <span>Add Options</span>
+                                    </button>
+                                    <button
+                                        class="flex items-center gap-2 rounded-lg bg-gray-100 dark:bg-white/10 px-4 py-2 text-xs font-bold text-gray-600 dark:text-gray-400 hover:bg-gray-200 transition-colors">
+                                        <span class="material-symbols-outlined text-sm">magic_button</span>
+                                        <span>AI Suggest Options</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Add Section Buttons -->
+                            <div class="flex flex-col md:flex-row gap-4">
+                                <button id="add-question-btn"
+                                    class="flex-1 flex items-center justify-center gap-2 rounded-lg border-2 border-dashed border-gray-200 dark:border-white/10 px-6 py-4 text-sm font-medium text-gray-400 hover:border-[#10B981]/40 hover:text-[#10B981] transition-all">
+                                    <span
+                                        class="material-symbols-outlined rounded-full bg-primary/10 p-1 group-hover:bg-primary group-hover:text-white transition-colors"
+                                        style="background-color: rgba(16, 185, 129, 0.1); color: #10B981;">add</span>
+                                    <span>Add New Question Section</span>
+                                </button>
+                                <button id="ai-generate-btn"
+                                    class="flex-1 flex items-center justify-center gap-2 rounded-lg border-2 border-dashed border-primary/30 bg-primary/5 px-6 py-4 text-sm font-bold text-primary hover:bg-primary/10 transition-all">
+                                    <span class="material-symbols-outlined">auto_fix_high</span>
+                                    <span>Generate with AI</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <!-- Preview Pane (Right) -->
+                <section
+                    class="hidden lg:flex w-[450px] xl:w-[600px] flex-col overflow-y-auto border-l border-[#e8f2ef] dark:border-white/10 bg-[#f1f5f3] dark:bg-[#0d1613] p-8 custom-scrollbar">
+                    <div class="mb-4 flex items-center justify-between">
+                        <span class="text-xs font-bold uppercase tracking-widest text-[#53937d]">Live Paper
+                            Preview</span>
+                        <div class="flex gap-2">
+                            <button
+                                class="flex size-8 items-center justify-center rounded bg-white dark:bg-white/5 shadow-sm text-gray-500 hover:text-primary">
+                                <span class="material-symbols-outlined text-lg">zoom_in</span>
+                            </button>
+                            <button
+                                class="flex size-8 items-center justify-center rounded bg-white dark:bg-white/5 shadow-sm text-gray-500 hover:text-primary">
+                                <span class="material-symbols-outlined text-lg">print</span>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Paper Sheet -->
+                    <div
+                        class="paper-shadow relative min-h-[800px] w-full bg-white p-12 text-black font-bengali overflow-hidden">
+                        <div class="watermark">QUESTIONCRAFT BD</div>
+                        <!-- Official Header -->
+                        <div class="mb-8 text-center">
+                            <h3 class="text-xl font-bold uppercase leading-tight tracking-wide font-display">Dhaka
+                                Residential Model College</h3>
+                            <p class="text-sm font-bold font-display mt-1">Mid-Term Examination - 2024</p>
+                            <div
+                                class="mt-4 flex justify-between border-b-2 border-black pb-2 text-[13px] font-bold font-display">
+                                <span>Subject: Physics</span>
+                                <span>Time: 1 Hour 30 Min</span>
+                                <span>Full Marks: 50</span>
+                            </div>
+                        </div>
+                        <!-- Instructions -->
+                        <div class="mb-6 text-[12px] italic">
+                            <p>[N.B. Answer all questions. The figures in the right margin indicate full marks.]</p>
+                        </div>
+                        <!-- Rendered Questions -->
+                        <div class="space-y-6">
+                            <div>
+                                <div class="flex justify-between font-bold">
+                                    <span>১. নিচের কোনটি ভেক্টরের গুণনের ক্ষেত্রে প্রযোজ্য নয়?</span>
+                                    <span>১</span>
+                                </div>
+                                <div class="mt-3 grid grid-cols-2 gap-y-2 pl-4 text-sm">
+                                    <span>(ক) বিনিময় সূত্র</span>
+                                    <span>(খ) বন্টন সূত্র</span>
+                                    <span>(গ) সংযোগ সূত্র</span>
+                                    <span>(ঘ) ধ্রুবক গুণন</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between font-bold">
+                                    <span>২. পৃথিবীর কেন্দ্রস্থলে অভিকর্ষজ ত্বরণের মান কত?</span>
+                                    <span>১</span>
+                                </div>
+                                <div class="mt-2 h-4 w-3/4 border-b border-dotted border-gray-400"></div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between font-bold">
+                                    <span>৩. সৃজনশীল প্রশ্ন (Creative Question):</span>
+                                    <span>১০</span>
+                                </div>
+                                <p class="mt-2 text-sm leading-relaxed">একটি ক্রিকেট বলকে ৫ মিটার উচ্চতা থেকে নিচে ফেলে
+                                    দেওয়া হলো। একই সময়ে অপর একটি বলকে নিচ থেকে উপরের দিকে ১০ মি./সে. বেগে নিক্ষেপ করা
+                                    হলো।</p>
+                                <div class="mt-3 space-y-1 pl-4 text-sm">
+                                    <div class="flex justify-between italic"><span>(ক) পর্যায়কাল কাকে
+                                            বলে?</span><span>১</span></div>
+                                    <div class="flex justify-between italic"><span>(খ) মহাকর্ষীয় ধ্রুবক বলতে কী
+                                            বোঝায়?</span><span>২</span></div>
+                                    <div class="flex justify-between italic"><span>(গ) ১ম বলটি কত সময় পর মাটিতে
+                                            পড়বে?</span><span>৩</span></div>
+                                    <div class="flex justify-between italic"><span>(ঘ) বলদ্বয় কি শূন্যে মিলিত হবে?
+                                            গাণিতিক ব্যাখ্যা দাও।</span><span>৪</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Page Footer -->
+                        <div
+                            class="absolute bottom-8 left-0 w-full px-12 text-center text-[10px] text-gray-400 font-display">
+                            Page 1 of 4 • Generated via QuestionCraft BD
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+        <!-- Bottom Status Bar -->
+        <footer
+            class="flex h-8 items-center justify-between border-t border-[#e8f2ef] dark:border-white/10 bg-white dark:bg-background-dark px-6 text-[11px] font-medium text-gray-500">
+            <div class="flex items-center gap-4">
+                <span class="flex items-center gap-1"><span class="size-2 rounded-full bg-primary"></span> Cloud
+                    Synced</span>
+                <span>Character Count: 1,240</span>
+                <span>Total Questions: 12</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="text-primary font-bold">Physics • Class X • NCTB Syllabus</span>
+                <span class="material-symbols-outlined text-[14px]">settings</span>
+            </div>
+        </footer>
+    </div>
+</body>
+
+</html>
