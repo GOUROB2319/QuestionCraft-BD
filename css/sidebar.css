@@ -1,0 +1,6 @@
+/* Sidebar Styles */
+.sidebar {
+    width: 256px;
+    background: var(--primary);
+    color: white;
+}

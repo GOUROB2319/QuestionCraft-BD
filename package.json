@@ -1,0 +1,11 @@
+{
+  "name": "questioncraft-bd",
+  "version": "2.0.0",
+  "description": "AI-powered question paper creation for Bangladesh teachers",
+  "scripts": {
+    "start": "python -m http.server 8000"
+  },
+  "keywords": ["education", "bangladesh", "AI", "gemini"],
+  "author": "QuestionCraft BD",
+  "license": "MIT"
+}

@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Question Generator - QuestionCraft BD</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../js/config.local.js"></script>
+    <script src="../../js/config.js"></script>
+    <script src="../../js/auth.js"></script>
+    <script src="../../js/utils.js"></script>
+    <script src="../../js/gemini-api.js"></script>
+    <script src="../../js/question-manager.js"></script>
+    
+    <style>
+        body { font-family: 'Hind Siliguri', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #10B981 0%, #3B82F6 100%); }
+    </style>
+</head>
+<body class="bg-gray-50">
+    
+    <div class="max-w-6xl mx-auto p-8">
+        <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
+            
+            <!-- Header with Gradient -->
+            <div class="gradient-bg p-8 text-white">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="w-16 h-16 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center">
+                        <span class="material-symbols-outlined text-4xl">auto_awesome</span>
+                    </div>
+                    <div>
+                        <h1 class="text-4xl font-bold">AI Question Generator</h1>
+                        <p class="text-emerald-100">Google Gemini AI দিয়ে মিনিটে তৈরি করুন নিখুঁত প্রশ্ন</p>
+                    </div>
+                </div>
+                
+                <div class="flex gap-6 mt-6">
+                    <div class="flex items-center gap-2 bg-white/20 px-4 py-2 rounded-lg">
+                        <span class="material-symbols-outlined">bolt</span>
+                        <span class="text-sm">দ্রুত</span>
+                    </div>
+                    <div class="flex items-center gap-2 bg-white/20 px-4 py-2 rounded-lg">
+                        <span class="material-symbols-outlined">verified</span>
+                        <span class="text-sm">NCTB অনুযায়ী</span>
+                    </div>
+                    <div class="flex items-center gap-2 bg-white/20 px-4 py-2 rounded-lg">
+                        <span class="material-symbols-outlined">deployed_code</span>
+                        <span class="text-sm" id="remainingRequests">বাকি: ১৫০০ requests</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Form -->
+            <div class="p-8">
+                <form id="aiForm" class="space-y-6">
+                    
+                    <!-- Topic -->
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-3">বিষয় / Topic *</label>
+                        <input type="text" id="topic" required 
+                            class="w-full px-6 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none text-lg" 
+                            placeholder="যেমন: পদার্থবিজ্ঞান - নিউটনের গতির সূত্র"/>
+                        <p class="text-xs text-gray-500 mt-2">* যত বেশি specific হবেন, তত ভালো result পাবেন</p>
+                    </div>
+                    
+                    <!-- Settings Grid -->
+                    <div class="grid md:grid-cols-3 gap-6">
+                        
+                        <!-- Question Count -->
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-3">প্রশ্ন সংখ্যা</label>
+                            <div class="relative">
+                                <input type="number" id="count" value="5" min="1" max="20" 
+                                    class="w-full px-6 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-lg"/>
+                                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm">max 20</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Class Level -->
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-3">শ্রেণী</label>
+                            <select id="classLevel" class="w-full px-6 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-lg">
+                                <option value="6">ষষ্ঠ (Class 6)</option>
+                                <option value="7">সপ্তম (Class 7)</option>
+                                <option value="8">অষ্টম (Class 8)</option>
+                                <option value="9">নবম (Class 9)</option>
+                                <option value="10" selected>দশম (Class 10)</option>
+                                <option value="11">একাদশ (Class 11)</option>
+                                <option value="12">দ্বাদশ (Class 12)</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Question Type -->
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-3">প্রশ্নের ধরন</label>
+                            <select id="questionType" class="w-full px-6 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-lg">
+                                <option value="mcq" selected>MCQ (বহুনির্বাচনি)</option>
+                                <option value="creative">সৃজনশীল</option>
+                                <option value="short">সংক্ষিপ্ত প্রশ্ন</option>
+                                <option value="true_false">সত্য/মিথ্যা</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Difficulty -->
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-3">কঠিনতার মাত্রা</label>
+                        <div class="grid grid-cols-3 gap-4">
+                            <label class="relative">
+                                <input type="radio" name="difficulty" value="easy" class="peer sr-only"/>
+                                <div class="p-4 border-2 border-gray-200 rounded-xl cursor-pointer peer-checked:border-green-500 peer-checked:bg-green-50 transition-all text-center">
+                                    <div class="text-2xl mb-2">😊</div>
+                                    <div class="font-bold">সহজ</div>
+                                    <div class="text-xs text-gray-500">Easy</div>
+                                </div>
+                            </label>
+                            
+                            <label class="relative">
+                                <input type="radio" name="difficulty" value="medium" checked class="peer sr-only"/>
+                                <div class="p-4 border-2 border-gray-200 rounded-xl cursor-pointer peer-checked:border-amber-500 peer-checked:bg-amber-50 transition-all text-center">
+                                    <div class="text-2xl mb-2">🤔</div>
+                                    <div class="font-bold">মাঝারি</div>
+                                    <div class="text-xs text-gray-500">Medium</div>
+                                </div>
+                            </label>
+                            
+                            <label class="relative">
+                                <input type="radio" name="difficulty" value="hard" class="peer sr-only"/>
+                                <div class="p-4 border-2 border-gray-200 rounded-xl cursor-pointer peer-checked:border-red-500 peer-checked:bg-red-50 transition-all text-center">
+                                    <div class="text-2xl mb-2">🔥</div>
+                                    <div class="font-bold">কঠিন</div>
+                                    <div class="text-xs text-gray-500">Hard</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Generate Button -->
+                    <button type="submit" id="generateBtn" class="w-full bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-700 hover:to-blue-700 text-white font-bold py-5 rounded-xl shadow-2xl transition-all text-lg flex items-center justify-center gap-3">
+                        <span class="material-symbols-outlined text-3xl">rocket_launch</span>
+                        প্রশ্ন তৈরি করুন (Generate Questions)
+                    </button>
+                </form>
+                
+                <!-- Loading State -->
+                <div id="loadingState" class="hidden mt-8 p-8 bg-gradient-to-r from-emerald-50 to-blue-50 rounded-2xl text-center">
+                    <div class="w-20 h-20 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">AI প্রশ্ন তৈরি করছে...</h3>
+                    <p class="text-gray-600">কয়েক সেকেন্ড অপেক্ষা করুন</p>
+                </div>
+                
+                <!-- Results -->
+                <div id="results" class="hidden mt-8">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-2xl font-bold text-gray-900">✨ Generated Questions</h3>
+                        <button onclick="saveAllQuestions()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-semibold transition-all flex items-center gap-2">
+                            <span class="material-symbols-outlined">save</span>
+                            সব প্রশ্ন সংরক্ষণ করুন
+                        </button>
+                    </div>
+                    
+                    <div id="questionsList" class="space-y-4">
+                        <!-- Generated questions will appear here -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Back Button -->
+            <div class="px-8 pb-8">
+                <a href="../dashboard/index.html" class="text-emerald-600 font-semibold hover:text-emerald-700 inline-flex items-center gap-2">
+                    <span class="material-symbols-outlined">arrow_back</span>
+                    Dashboard এ ফিরে যান
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let generatedQuestions = [];
+
+        (async () => {
+            const ok = await auth.requireAuth(CONFIG.resolvePath(CONFIG.PATHS.LOGIN));
+            if (!ok) return;
+        })();
+        
+        document.getElementById('aiForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Show loading
+            document.getElementById('loadingState').classList.remove('hidden');
+            document.getElementById('results').classList.add('hidden');
+            document.getElementById('generateBtn').disabled = true;
+            
+            // Get form values
+            const topic = document.getElementById('topic').value;
+            const count = parseInt(document.getElementById('count').value);
+            const classLevel = document.getElementById('classLevel').value;
+            const questionType = document.getElementById('questionType').value;
+            const difficulty = document.querySelector('input[name="difficulty"]:checked').value;
+            
+            try {
+                // Call Gemini API
+                const result = await geminiAI.generateQuestions({
+                    topic: topic,
+                    count: count,
+                    difficulty: difficulty,
+                    questionType: questionType,
+                    classLevel: classLevel,
+                    language: 'bn'
+                });
+                
+                // Hide loading
+                document.getElementById('loadingState').classList.add('hidden');
+                document.getElementById('generateBtn').disabled = false;
+                
+                if (result.success) {
+                    generatedQuestions = result.questions;
+                    displayQuestions(result.questions);
+                    
+                    // Update remaining requests
+                    const remaining = geminiAI.getRemainingRequests();
+                    document.getElementById('remainingRequests').textContent = `বাকি: ${remaining.perDay} requests`;
+                } else {
+                    alert('Error: ' + result.error);
+                }
+                
+            } catch (error) {
+                document.getElementById('loadingState').classList.add('hidden');
+                document.getElementById('generateBtn').disabled = false;
+                alert('প্রশ্ন তৈরিতে সমস্যা হয়েছে: ' + error.message);
+            }
+        });
+        
+        function displayQuestions(questions) {
+            document.getElementById('results').classList.remove('hidden');
+            const container = document.getElementById('questionsList');
+            
+            container.innerHTML = questions.map((q, index) => `
+                <div class="bg-white border-2 border-gray-100 hover:border-emerald-300 p-6 rounded-xl transition-all group">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center font-bold">
+                                ${index + 1}
+                            </div>
+                            <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold">${utils.escapeHtml(q.type?.toUpperCase() || 'MCQ')}</span>
+                            ${q.marks ? `<span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-bold">${q.marks} নম্বর</span>` : ''}
+                        </div>
+                        
+                        <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button onclick="editQuestion(${index})" class="p-2 hover:bg-blue-50 text-blue-600 rounded-lg" title="Edit">
+                                <span class="material-symbols-outlined">edit</span>
+                            </button>
+                            <button onclick="removeQuestion(${index})" class="p-2 hover:bg-red-50 text-red-600 rounded-lg" title="Remove">
+                                <span class="material-symbols-outlined">close</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h4 class="text-lg font-bold text-gray-900 mb-3">${utils.escapeHtml(q.question)}</h4>
+                        
+                        ${q.options ? `
+                            <div class="space-y-2 ml-4">
+                                ${q.options.map((opt, i) => `
+                                    <div class="flex items-center gap-2 ${opt === q.correctAnswer || opt.startsWith(q.correctAnswer) ? 'text-emerald-600 font-semibold' : 'text-gray-700'}">
+                                        ${opt === q.correctAnswer || opt.startsWith(q.correctAnswer) ? '<span class="material-symbols-outlined text-sm">check_circle</span>' : '<span class="w-5"></span>'}
+                                        ${utils.escapeHtml(opt)}
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                        
+                        ${q.correctAnswer && !q.options ? `
+                            <div class="mt-3 p-3 bg-emerald-50 rounded-lg">
+                                <span class="text-emerald-700 font-semibold">✓ সঠিক উত্তর: ${utils.escapeHtml(q.correctAnswer)}</span>
+                            </div>
+                        ` : ''}
+                        
+                        ${q.explanation ? `
+                            <div class="mt-3 p-3 bg-blue-50 rounded-lg text-sm text-gray-700">
+                                <strong>ব্যাখ্যা:</strong> ${utils.escapeHtml(q.explanation)}
+                            </div>
+                        ` : ''}
+                    </div>
+                    
+                    <div class="flex items-center gap-4 text-xs text-gray-500 pt-3 border-t border-gray-100">
+                        <div class="flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm">auto_awesome</span>
+                            AI Generated
+                        </div>
+                        <div>Class ${document.getElementById('classLevel').value}</div>
+                        <div>${q.difficulty || document.querySelector('input[name="difficulty"]:checked').value}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function editQuestion(index) {
+            const question = generatedQuestions[index].question;
+            const newQuestion = prompt('প্রশ্ন সম্পাদনা করুন:', question);
+            if (newQuestion) {
+                generatedQuestions[index].question = newQuestion;
+                displayQuestions(generatedQuestions);
+            }
+        }
+        
+        function removeQuestion(index) {
+            if (confirm('এই প্রশ্নটি মুছে ফেলতে চান?')) {
+                generatedQuestions.splice(index, 1);
+                displayQuestions(generatedQuestions);
+            }
+        }
+        
+        async function saveAllQuestions() {
+            if (generatedQuestions.length === 0) {
+                alert('কোনো প্রশ্ন নেই!');
+                return;
+            }
+            
+            // Save to question manager
+            for (const q of generatedQuestions) {
+                await questionManager.create({
+                    ...q,
+                    subject: document.getElementById('topic').value.split('-')[0].trim(),
+                    class: document.getElementById('classLevel').value,
+                    difficulty: document.querySelector('input[name="difficulty"]:checked').value
+                });
+            }
+            
+            alert(`✅ ${generatedQuestions.length}টি প্রশ্ন সফলভাবে সংরক্ষণ করা হয়েছে!`);
+            
+            // Redirect to question bank
+            if (confirm('Question Bank দেখতে চান?')) {
+                window.location.href = '../question-bank/index.html';
+            }
+        }
+    </script>
+</body>
+</html>
